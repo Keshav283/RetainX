@@ -185,6 +185,17 @@ class RetainXApiTests(unittest.TestCase):
         self.assertIn("retention_protocols", context)
         self.assertGreater(len(context["retention_protocols"]), 0)
 
+    def test_model_stats_endpoint_returns_metrics_and_graphs(self):
+        response = self.client.get("/api/model-stats")
+        self.assertEqual(response.status_code, 200)
+        data = response.get_json()
+        self.assertIn("ecommerce", data)
+        self.assertIn("reviews", data)
+        self.assertIn("graphs", data)
+        self.assertTrue(len(data["graphs"]) >= 4)
+        self.assertIn("confusion_matrix", data["ecommerce"])
+        self.assertIn("confusion_matrix", data["reviews"])
+
 
 if __name__ == "__main__":
     unittest.main()

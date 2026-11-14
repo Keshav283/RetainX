@@ -5,15 +5,21 @@ payload = {
     "industry": "ecommerce",
     "consent": True,
     "customer": {
-        "order_value": 120.0,
-        "freight_value": 45.0,
-        "delivery_delay_days": 8.0,
-        "delivery_duration_days": 22.0,
-        "payment_type": "credit_card",
-        "payment_installments": 1,
-        "total_items": 1,
-        "review_score": 1,
-        "review_text": "O produto demorou mais de uma semana além do prazo e a caixa veio toda rasgada. Péssima experiência.",
+        "days_since_last_order": 120,
+        "orders_in_history": 1,
+        "days_since_first_order": 120,
+        "average_order_value": 145.0,
+        "total_historical_spend": 145.0,
+        "average_items_per_order": 1,
+        "last_order_value": 145.0,
+        "last_freight_value": 38.5,
+        "last_payment_installments": 1,
+        "last_payment_type": "credit_card",
+        "average_review_score": 1,
+        "last_review_score": 1,
+        "average_delivery_delay_days": 14.0,
+        "average_delivery_duration_days": 28.0,
+        "review_text": "O produto atrasou mais de 14 dias além do prazo prometido e a caixa chegou amassada e rasgada. Experiência péssima com o vendedor.",
     },
 }
 
@@ -32,5 +38,5 @@ try:
 except Exception as e:
     body = ""
     if hasattr(e, "read"):
-        body = e.read().decode("utf-8", errors="replace")[:300]
+        body = e.read().decode("utf-8", errors="replace")[:500]
     print("Error:", e, body)

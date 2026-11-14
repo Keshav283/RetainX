@@ -22,9 +22,57 @@
   // Customer history scenarios for the 90-day inactivity definition.
   const presets = {
     ecommerce: {
-      critical: { days_since_last_order: 120, orders_in_history: 1, days_since_first_order: 120, average_order_value: 145, total_historical_spend: 145, average_items_per_order: 1, last_order_value: 145, last_freight_value: 38.5, last_payment_installments: 1, last_payment_type: "credit_card", average_review_score: 1, last_review_score: 1, average_delivery_delay_days: 14, average_delivery_duration_days: 28 },
-      borderline: { days_since_last_order: 75, orders_in_history: 2, days_since_first_order: 180, average_order_value: 85, total_historical_spend: 170, average_items_per_order: 1, last_order_value: 85, last_freight_value: 24, last_payment_installments: 1, last_payment_type: "boleto", average_review_score: 3, last_review_score: 3, average_delivery_delay_days: 2, average_delivery_duration_days: 15 },
-      healthy: { days_since_last_order: 20, orders_in_history: 5, days_since_first_order: 360, average_order_value: 320, total_historical_spend: 1600, average_items_per_order: 3, last_order_value: 320, last_freight_value: 18, last_payment_installments: 6, last_payment_type: "credit_card", average_review_score: 5, last_review_score: 5, average_delivery_delay_days: -4, average_delivery_duration_days: 7 }
+      critical: {
+        days_since_last_order: 120,
+        orders_in_history: 1,
+        days_since_first_order: 120,
+        average_order_value: 145,
+        total_historical_spend: 145,
+        average_items_per_order: 1,
+        last_order_value: 145,
+        last_freight_value: 38.5,
+        last_payment_installments: 1,
+        last_payment_type: "credit_card",
+        average_review_score: 1,
+        last_review_score: 1,
+        average_delivery_delay_days: 14,
+        average_delivery_duration_days: 28,
+        review_text: "O produto atrasou mais de 14 dias além do prazo prometido e a caixa chegou amassada e rasgada. Experiência péssima com o vendedor."
+      },
+      borderline: {
+        days_since_last_order: 75,
+        orders_in_history: 2,
+        days_since_first_order: 180,
+        average_order_value: 85,
+        total_historical_spend: 170,
+        average_items_per_order: 1,
+        last_order_value: 85,
+        last_freight_value: 24,
+        last_payment_installments: 1,
+        last_payment_type: "boleto",
+        average_review_score: 3,
+        last_review_score: 3,
+        average_delivery_delay_days: 2,
+        average_delivery_duration_days: 15,
+        review_text: "O produto em si é aceitável, mas paguei muito caro no frete e demorou mais do que o esperado para chegar."
+      },
+      healthy: {
+        days_since_last_order: 20,
+        orders_in_history: 5,
+        days_since_first_order: 360,
+        average_order_value: 320,
+        total_historical_spend: 1600,
+        average_items_per_order: 3,
+        last_order_value: 320,
+        last_freight_value: 18,
+        last_payment_installments: 6,
+        last_payment_type: "credit_card",
+        average_review_score: 5,
+        last_review_score: 5,
+        average_delivery_delay_days: -4,
+        average_delivery_duration_days: 7,
+        review_text: "Adorei a compra! O produto é de altíssima qualidade e chegou quatro dias antes da data estimada. Com certeza comprarei novamente."
+      }
     }
   };
 
@@ -94,32 +142,55 @@
     return featureLabels[name] || name.replaceAll("_", " ");
   }
 
-  // Lightweight Markdown to HTML Renderer for Executive Cleanliness
+  // Executive-grade Markdown to HTML Renderer
   function renderMarkdown(md) {
     if (!md) return "";
     let html = md
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/^### (.*$)/gim, "<h4>$1</h4>")
-      .replace(/^## (.*$)/gim, "<h3>$1</h3>")
-      .replace(/^# (.*$)/gim, "<h2>$1</h2>")
-      .replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>")
-      .replace(/\*(.*?)\*/gim, "<em>$1</em>")
-      .replace(/^\s*[\-\*]\s+(.*$)/gim, "<li>$1</li>")
-      .replace(/^\s*\d+\.\s+(.*$)/gim, "<li>$1</li>");
+      .replace(/>/g, "&gt;");
 
+    // Code blocks / email drafts
+    html = html.replace(/```([\s\S]*?)```/gm, "<pre class=\"chat-code-block\"><code>$1</code></pre>");
+    
+    // Headings
+    html = html.replace(/^#### (.*$)/gim, "<h5>$1</h5>");
+    html = html.replace(/^### (.*$)/gim, "<h4>$1</h4>");
+    html = html.replace(/^## (.*$)/gim, "<h3>$1</h3>");
+    html = html.replace(/^# (.*$)/gim, "<h2>$1</h2>");
+
+    // Bold, Italic, Inline Code
+    html = html.replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>");
+    html = html.replace(/\*(.*?)\*/gim, "<em>$1</em>");
+    html = html.replace(/`([^`]+)`/g, "<code class=\"inline-code\">$1</code>");
+
+    // Blockquotes
+    html = html.replace(/^\> (.*$)/gim, "<blockquote>$1</blockquote>");
+
+    // Lists
+    html = html.replace(/^\s*[\-\*]\s+(.*$)/gim, "<li>$1</li>");
+    html = html.replace(/^\s*\d+\.\s+(.*$)/gim, "<li class=\"num-li\">$1</li>");
+
+    // Wrap adjacent list items in <ul> or <ol>
     html = html.replace(/(<li>.*?<\/li>)/gms, "<ul>$1</ul>");
     html = html.replace(/<\/ul>\s*<ul>/g, "");
-    
-    const paragraphs = html.split(/\n{2,}/).map(p => {
-      p = p.trim();
-      if (!p) return "";
-      if (p.startsWith("<h") || p.startsWith("<ul") || p.startsWith("<ol")) return p;
-      return `<p>${p.replace(/\n/g, "<br>")}</p>`;
+
+    const blocks = html.split(/\n{2,}/).map(block => {
+      block = block.trim();
+      if (!block) return "";
+      if (
+        block.startsWith("<h") ||
+        block.startsWith("<ul") ||
+        block.startsWith("<ol") ||
+        block.startsWith("<blockquote") ||
+        block.startsWith("<pre")
+      ) {
+        return block;
+      }
+      return `<p>${block.replace(/\n/g, "<br>")}</p>`;
     });
 
-    return paragraphs.join("");
+    return blocks.join("");
   }
 
   function setIndustry(industry) {
@@ -459,6 +530,113 @@
       } catch (e) {}
     });
   }
+
+  // --- College Project Model Analytics & Viva Studio Controls ---
+  const viewSimulator = document.getElementById("view-simulator");
+  const viewAnalytics = document.getElementById("view-analytics");
+  const navBtnSimulator = document.getElementById("nav-btn-simulator");
+  const navBtnAnalytics = document.getElementById("nav-btn-analytics");
+  const heroModelsBtn = document.getElementById("hero-models-btn");
+  const analyticsBackBtn = document.getElementById("analytics-back-btn");
+
+  function switchView(target) {
+    if (target === "analytics") {
+      if (viewSimulator) viewSimulator.classList.add("hidden");
+      if (viewAnalytics) viewAnalytics.classList.remove("hidden");
+      if (navBtnSimulator) navBtnSimulator.classList.remove("active");
+      if (navBtnAnalytics) navBtnAnalytics.classList.add("active");
+      viewAnalytics?.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      if (viewAnalytics) viewAnalytics.classList.add("hidden");
+      if (viewSimulator) viewSimulator.classList.remove("hidden");
+      if (navBtnAnalytics) navBtnAnalytics.classList.remove("active");
+      if (navBtnSimulator) navBtnSimulator.classList.add("active");
+      viewSimulator?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  if (navBtnSimulator) navBtnSimulator.addEventListener("click", () => switchView("simulator"));
+  if (navBtnAnalytics) navBtnAnalytics.addEventListener("click", () => switchView("analytics"));
+  if (heroModelsBtn) heroModelsBtn.addEventListener("click", () => switchView("analytics"));
+  if (analyticsBackBtn) analyticsBackBtn.addEventListener("click", () => switchView("simulator"));
+  const inlineModelGraphsBtn = document.getElementById("inline-model-graphs-btn");
+  if (inlineModelGraphsBtn) inlineModelGraphsBtn.addEventListener("click", () => switchView("analytics"));
+
+  // Studio Sub-Tabs (ROC, CM, Features, NLP, Benchmark, Viva)
+  const studioTabs = document.querySelectorAll(".studio-tab-btn");
+  const studioPanels = document.querySelectorAll(".studio-panel");
+
+  studioTabs.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const tabId = btn.dataset.tab;
+      studioTabs.forEach(b => {
+        b.classList.remove("active");
+        b.setAttribute("aria-selected", "false");
+      });
+      btn.classList.add("active");
+      btn.setAttribute("aria-selected", "true");
+
+      studioPanels.forEach(panel => {
+        if (panel.id === `tab-panel-${tabId}`) {
+          panel.classList.remove("hidden");
+        } else {
+          panel.classList.add("hidden");
+        }
+      });
+    });
+  });
+
+  // Viva Accordion Q&A
+  const vivaItems = document.querySelectorAll(".viva-item");
+  vivaItems.forEach(item => {
+    const question = item.querySelector(".viva-question");
+    if (question) {
+      question.addEventListener("click", () => {
+        const isOpen = item.classList.contains("open");
+        item.classList.toggle("open", !isOpen);
+      });
+    }
+  });
+
+  // Graph Image Lightbox Modal
+  const lightboxModal = document.getElementById("graph-lightbox");
+  const lightboxImg = document.getElementById("lightbox-img");
+  const lightboxClose = document.getElementById("lightbox-close");
+  const zoomableWrappers = document.querySelectorAll(".graph-image-wrapper");
+
+  function openLightbox(src, alt) {
+    if (!lightboxModal || !lightboxImg) return;
+    lightboxImg.src = src;
+    lightboxImg.alt = alt || "Graph preview";
+    lightboxModal.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeLightbox() {
+    if (!lightboxModal) return;
+    lightboxModal.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  zoomableWrappers.forEach(wrapper => {
+    wrapper.addEventListener("click", () => {
+      const img = wrapper.querySelector("img");
+      if (img) openLightbox(img.src, img.alt);
+    });
+  });
+
+  if (lightboxClose) lightboxClose.addEventListener("click", closeLightbox);
+  if (lightboxModal) {
+    lightboxModal.addEventListener("click", (e) => {
+      if (e.target === lightboxModal) closeLightbox();
+    });
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && lightboxModal && lightboxModal.classList.contains("open")) {
+      closeLightbox();
+    }
+  });
 
   setIndustry("ecommerce");
 })();

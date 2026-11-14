@@ -19,7 +19,7 @@
       } catch(e) {}
     })();
   </script>
-  <link rel="stylesheet" href="{{ url_for('static', filename='retainx.css', v='6') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='retainx.css', v='8') }}">
 </head>
 <body>
   <div class="ambient-glow glow-1" aria-hidden="true"></div>
@@ -39,6 +39,25 @@
           <span class="brand-badge">OLIST E-COMMERCE AI</span>
         </div>
       </div>
+
+      <!-- Navigation Mode Switcher -->
+      <nav class="header-nav" aria-label="Main Navigation">
+        <button type="button" class="view-nav-btn active" id="nav-btn-simulator" data-view="simulator">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          <span>Retention Simulator</span>
+        </button>
+        <button type="button" class="view-nav-btn" id="nav-btn-analytics" data-view="analytics">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          <span>Model Accuracy & Graphs</span>
+          <span class="nav-pill-badge">College Viva</span>
+        </button>
+      </nav>
 
       <div class="header-status-group">
         <div class="status-indicator">
@@ -86,6 +105,17 @@
         <p class="hero-sub">Explore how order, delivery, payment, and review signals relate to repeat purchasing in the Olist marketplace.</p>
       </div>
 
+      <!-- College Viva / Project Evaluation Shortcut Banner -->
+      <div class="college-project-callout">
+        <div class="callout-pill-icon">🎓</div>
+        <div class="callout-pill-text">
+          <strong>College Project Defense &amp; Viva:</strong> Need to explain model accuracy, ROC curves, confusion matrices, or feature importance to your mentor?
+        </div>
+        <button type="button" class="callout-action-btn" id="hero-models-btn">
+          View Trained Model Graphs &amp; Statistics &rarr;
+        </button>
+      </div>
+
       <!-- Quick Preset Toolbar -->
       <div class="preset-toolbar">
         <span class="preset-label">Try a sample:</span>
@@ -101,8 +131,9 @@
       </div>
     </section>
 
-    <!-- Two-Column Workspace -->
-    <div class="workspace-layout">
+    <!-- View 1: Customer Retention Workspace -->
+    <div class="view-panel" id="view-simulator">
+      <div class="workspace-layout">
 
       <!-- LEFT COLUMN: Input & Metrics Studio -->
       <section class="card input-card">
@@ -255,6 +286,16 @@
 
           <!-- Model Telemetry Quality -->
           <div class="model-meta-box" id="model-quality"></div>
+          <div class="model-quality-actions">
+            <button type="button" class="view-graphs-inline-btn" id="inline-model-graphs-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+              <span>View Trained Model Graphs &amp; Statistics Studio &rarr;</span>
+            </button>
+          </div>
 
           <!-- AI Retention Playbook Card (Powered by Gemini + RAG) -->
           <div class="ai-playbook-card" id="recommendation-card">
@@ -315,7 +356,498 @@
 
         </div>
       </section>
+      </div>
+    </div><!-- End View 1: #view-simulator -->
 
+    <!-- View 2: Trained Models Evaluation & Mentor Defense Studio -->
+    <div class="view-panel hidden" id="view-analytics">
+      <div class="analytics-canvas">
+        
+        <!-- Analytics Header Bar -->
+        <div class="analytics-hero-bar">
+          <div class="analytics-title-group">
+            <span class="analytics-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 6v6l4 2"></path>
+              </svg>
+              ACADEMIC PROJECT DEFENSE · EVALUATION SUITE
+            </span>
+            <h2>Trained Model Performance, Accuracy &amp; Visualizations</h2>
+            <p>Comprehensive validation telemetry, ROC curves, confusion matrices, and directional feature weights trained on 100,000 Olist e-commerce orders and 37,123 Portuguese reviews with customer-grouped holdouts.</p>
+          </div>
+          <div class="analytics-actions">
+            <button type="button" class="secondary-btn" id="analytics-back-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              <span>Back to Simulator</span>
+            </button>
+            <a href="{{ url_for('static', filename='images/model_graphs/roc_curves.png') }}" target="_blank" class="secondary-btn" title="Open ROC Curve Plot">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Download Plots</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 4-Card KPI Executive Scorecard Grid -->
+        <div class="analytics-kpi-grid">
+          <!-- KPI 1: NLP Model -->
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-label">NLP Sentiment Classifier</span>
+              <span class="kpi-chip emerald">0.974 AUC</span>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-number">97.4</span>
+              <span class="kpi-unit">% ROC-AUC</span>
+            </div>
+            <div class="kpi-subtext">Accuracy: 93.2% · F1-Score: 0.952</div>
+            <div class="kpi-caption">37,123 Portuguese reviews (7,417 test set); Precision: 95.1%, Recall: 95.2%.</div>
+          </div>
+
+          <!-- KPI 2: Churn Model -->
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-label">90-Day Churn Risk Model</span>
+              <span class="kpi-chip blue">0.738 AUC</span>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-number">0.738</span>
+              <span class="kpi-unit">ROC-AUC</span>
+            </div>
+            <div class="kpi-subtext">F1-Score: 0.776 · Inactivity Recall: 63.5%</div>
+            <div class="kpi-caption">56,334 train / 14,084 test customers (Customer-grouped holdout; no leakage).</div>
+          </div>
+
+          <!-- KPI 3: Repeat Specificity -->
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-label">Repeat Buyer Specificity</span>
+              <span class="kpi-chip emerald">71.4% Rate</span>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-number">71.4</span>
+              <span class="kpi-unit">% Detected</span>
+            </div>
+            <div class="kpi-subtext">142 of 199 Repeat Buyers Flagged</div>
+            <div class="kpi-caption">Balanced weights allow model to accurately isolate rare repeat buyers amidst heavy imbalance.</div>
+          </div>
+
+          <!-- KPI 4: Imbalance Disclosure -->
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-label">Class Imbalance Baseline</span>
+              <span class="kpi-chip amber">Honest Baseline</span>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-number">0.997</span>
+              <span class="kpi-unit">Majority F1</span>
+            </div>
+            <div class="kpi-subtext">99.48% Natural Inactivity Rate</div>
+            <div class="kpi-caption">Transparent college disclosure: 97% of Olist customers order once, requiring operational rules.</div>
+          </div>
+        </div>
+
+        <!-- Studio Navigation Bar -->
+        <div class="studio-tabs-bar" role="tablist">
+          <button type="button" class="studio-tab-btn active" data-tab="roc" role="tab" aria-selected="true">
+            📈 ROC Curves &amp; AUC
+          </button>
+          <button type="button" class="studio-tab-btn" data-tab="cm" role="tab" aria-selected="false">
+            🔲 Confusion Matrices
+          </button>
+          <button type="button" class="studio-tab-btn" data-tab="features" role="tab" aria-selected="false">
+            ⚖️ Feature Importance &amp; Weights
+          </button>
+          <button type="button" class="studio-tab-btn" data-tab="nlp" role="tab" aria-selected="false">
+            🇧🇷 NLP Sentiment Lexicon
+          </button>
+          <button type="button" class="studio-tab-btn" data-tab="benchmark" role="tab" aria-selected="false">
+            📊 Benchmark Comparison
+          </button>
+          <button type="button" class="studio-tab-btn" data-tab="viva" role="tab" aria-selected="false">
+            🎓 Mentor Viva &amp; Defense Guide
+          </button>
+        </div>
+
+        <!-- Studio Tab 1: ROC Curves -->
+        <div class="studio-panel" id="tab-panel-roc">
+          <div class="graph-preview-card">
+            <div class="graph-header">
+              <div>
+                <h3>Receiver Operating Characteristic (ROC) Curves</h3>
+                <p>Discriminative capacity across decision thresholds comparing both classifiers against random baseline.</p>
+              </div>
+              <span class="kpi-chip blue">Click image to enlarge</span>
+            </div>
+            <div class="graph-image-wrapper" title="Click to view full-resolution plot">
+              <img src="{{ url_for('static', filename='images/model_graphs/roc_curves.png') }}" alt="ROC Curves Comparison for Churn Model and NLP Sentiment Model" class="zoomable-graph" data-title="Receiver Operating Characteristic (ROC) Curves">
+              <div class="zoom-hint">🔍 Click to zoom</div>
+            </div>
+            <div class="deep-dive-grid">
+              <div class="deep-dive-box">
+                <h4>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                  90-Day Churn Risk Model (AUC = 0.738)
+                </h4>
+                <p>Evaluated on a strictly held-out partition of <strong>14,084 test customers (38,546 customer snapshots)</strong>. The model demonstrates meaningful discrimination between active buyers who reorder and those who cross 90 days without purchasing.</p>
+                <ul>
+                  <li><strong>Validation Strategy:</strong> Customer-Grouped Holdout (ensures snapshots from the same customer never cross partitions, preventing target leakage).</li>
+                  <li><strong>Random Guess Baseline:</strong> AUC = 0.500 (diagonal dashed line). Our model delivers <strong>+0.238 lift</strong> above random baseline.</li>
+                  <li><strong>Class Weighting:</strong> Trained with <code>class_weight='balanced'</code> to counterbalance extreme non-contractual single-order skew.</li>
+                </ul>
+              </div>
+              <div class="deep-dive-box">
+                <h4>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                  NLP Portuguese Review Model (AUC = 0.974)
+                </h4>
+                <p>Trained and validated on <strong>37,123 real Brazilian Portuguese customer reviews</strong>. Reaches exceptional discriminative performance due to clear lexical signals between praise and complaints.</p>
+                <ul>
+                  <li><strong>Feature Space:</strong> 5,000 TF-IDF unigram &amp; bigram tokens (e.g. <em>"rapida"</em>, <em>"nao recomendo"</em>).</li>
+                  <li><strong>Holdout Set:</strong> 20% order-grouped holdout (7,417 test reviews).</li>
+                  <li><strong>F1-Score:</strong> 0.952 with 95.1% Precision and 95.2% Recall.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Studio Tab 2: Confusion Matrices -->
+        <div class="studio-panel hidden" id="tab-panel-cm">
+          <div class="graph-preview-card">
+            <div class="graph-header">
+              <div>
+                <h3>Confusion Matrix Heatmaps &amp; Error Breakdown</h3>
+                <p>Ground truth vs predicted class assignments on strictly held-out test splits.</p>
+              </div>
+              <span class="kpi-chip blue">Click image to enlarge</span>
+            </div>
+            <div class="graph-image-wrapper" title="Click to view full-resolution plot">
+              <img src="{{ url_for('static', filename='images/model_graphs/confusion_matrices.png') }}" alt="Confusion Matrices for Churn and NLP Sentiment Models" class="zoomable-graph" data-title="Confusion Matrix Heatmaps &amp; Classification Breakdown">
+              <div class="zoom-hint">🔍 Click to zoom</div>
+            </div>
+            <div class="deep-dive-grid">
+              <div class="deep-dive-box">
+                <h4>90-Day Churn Model Error Breakdown</h4>
+                <div class="cm-table-wrap">
+                  <table class="cm-table">
+                    <thead>
+                      <tr>
+                        <th>N = 38,546 Snapshots</th>
+                        <th>Pred: Repeat (0)</th>
+                        <th>Pred: Churn (1)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th>Actual: Repeat (0) [199]</th>
+                        <td class="cell-tn"><strong>142 (TN)</strong><br><small>71.4% Specificity</small></td>
+                        <td class="cell-err"><strong>57 (FP)</strong><br><small>False Churn Alarm</small></td>
+                      </tr>
+                      <tr>
+                        <th>Actual: Churn (1) [38,347]</th>
+                        <td class="cell-err"><strong>13,990 (FN)</strong><br><small>Missed Inactive</small></td>
+                        <td class="cell-tp"><strong>24,357 (TP)</strong><br><small>63.5% Churn Recall</small></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p><strong>Mentor Defense Insight:</strong> Notice how the balanced model correctly identifies <strong>142 out of 199 rare repeat buyers (71.4% specificity)</strong>. In e-commerce retention, accurately finding the rare repeat buyer is critical because saving an active customer drives high lifetime value.</p>
+              </div>
+
+              <div class="deep-dive-box">
+                <h4>NLP Sentiment Classifier Error Breakdown</h4>
+                <div class="cm-table-wrap">
+                  <table class="cm-table">
+                    <thead>
+                      <tr>
+                        <th>N = 7,417 Reviews</th>
+                        <th>Pred: Negative (0)</th>
+                        <th>Pred: Positive (1)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th>Actual: Negative (0) [2,207]</th>
+                        <td class="cell-tn"><strong>1,953 (TN)</strong><br><small>88.5% Neg Specificity</small></td>
+                        <td class="cell-err"><strong>254 (FP)</strong><br><small>Type I Error</small></td>
+                      </tr>
+                      <tr>
+                        <th>Actual: Positive (1) [5,210]</th>
+                        <td class="cell-err"><strong>248 (FN)</strong><br><small>Type II Error</small></td>
+                        <td class="cell-tp"><strong>4,962 (TP)</strong><br><small>95.2% Pos Recall</small></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p><strong>Accuracy Calculation:</strong> Total Correct = $(1,953 + 4,962) = 6,915$ out of $7,417$ test reviews &rarr; <strong>93.2% Overall Test Accuracy</strong> with balanced error rates ($254$ FP vs $248$ FN).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Studio Tab 3: Feature Importance -->
+        <div class="studio-panel hidden" id="tab-panel-features">
+          <div class="graph-preview-card">
+            <div class="graph-header">
+              <div>
+                <h3>Logistic Regression Feature Weights &amp; Directional Impact</h3>
+                <p>Standardized coefficients (log-odds &beta; values) explaining feature leverage on customer churn.</p>
+              </div>
+              <span class="kpi-chip blue">Click image to enlarge</span>
+            </div>
+            <div class="graph-image-wrapper" title="Click to view full-resolution plot">
+              <img src="{{ url_for('static', filename='images/model_graphs/feature_importance.png') }}" alt="Feature Importance Plot for Churn Model" class="zoomable-graph" data-title="Logistic Regression Feature Importance Weights">
+              <div class="zoom-hint">🔍 Click to zoom</div>
+            </div>
+
+            <div class="deep-dive-box" style="margin-top:18px;">
+              <h4>Mathematical Attribution Formula (Per-Customer Explanation)</h4>
+              <p>Because all features are normalized with <code>StandardScaler</code> prior to logistic regression, each coefficient &beta;<sub>i</sub> directly reflects relative statistical leverage on the log-odds of churning:</p>
+              <div style="background:var(--bg-card); padding:12px 16px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:11.5px; margin-bottom:12px; color:var(--text-main);">
+                Log-Odds(Churn) = &beta;<sub>0</sub> + &sum; &beta;<sub>i</sub> &times; [ (x<sub>i</sub> - &mu;<sub>i</sub>) / &sigma;<sub>i</sub> ]
+              </div>
+              <p>A positive coefficient (red) pushes the customer towards churn, while a negative coefficient (green) acts as an anchor preserving customer retention.</p>
+            </div>
+
+            <div class="weights-container">
+              <div class="weight-card">
+                <span class="weight-name">Days Since Last Order (Recency)</span>
+                <span class="weight-badge churn">+0.7777 (Major Churn Driver)</span>
+              </div>
+              <div class="weight-card">
+                <span class="weight-name">Orders in History (Frequency)</span>
+                <span class="weight-badge retain">-0.2343 (Retention Anchor)</span>
+              </div>
+              <div class="weight-card">
+                <span class="weight-name">Total Historical Spend (Monetary)</span>
+                <span class="weight-badge retain">-0.2028 (High LTV Buffer)</span>
+              </div>
+              <div class="weight-card">
+                <span class="weight-name">Average Delivery Duration (Days)</span>
+                <span class="weight-badge churn">+0.1673 (Logistics Friction)</span>
+              </div>
+              <div class="weight-card">
+                <span class="weight-name">Average Review Rating (Stars)</span>
+                <span class="weight-badge retain">-0.1206 (Satisfaction Anchor)</span>
+              </div>
+              <div class="weight-card">
+                <span class="weight-name">Average Items per Basket</span>
+                <span class="weight-badge retain">-0.1198 (Basket Depth Anchor)</span>
+              </div>
+              <div class="weight-card">
+                <span class="weight-name">Payment Installments Count</span>
+                <span class="weight-badge retain">-0.1024 (Credit Engagement)</span>
+              </div>
+              <div class="weight-card">
+                <span class="weight-name">Last Order Value</span>
+                <span class="weight-badge churn">+0.2500 (One-Off Ticket Risk)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Studio Tab 4: NLP Lexicon -->
+        <div class="studio-panel hidden" id="tab-panel-nlp">
+          <div class="graph-preview-card">
+            <div class="graph-header">
+              <div>
+                <h3>Portuguese Customer Feedback NLP Lexicon</h3>
+                <p>Top unigram and bigram tokens driving 4-5 star positive praise vs 1-2 star complaints.</p>
+              </div>
+              <span class="kpi-chip emerald">TF-IDF + N-Grams</span>
+            </div>
+            <div class="graph-image-wrapper" title="Click to view full-resolution plot">
+              <img src="{{ url_for('static', filename='images/model_graphs/nlp_vocabulary.png') }}" alt="NLP Portuguese Sentiment Vocabulary" class="zoomable-graph" data-title="NLP Portuguese Review Sentiment Vocabulary">
+              <div class="zoom-hint">🔍 Click to zoom</div>
+            </div>
+            <div class="deep-dive-grid">
+              <div class="deep-dive-box">
+                <h4>Top Satisfied Review Signals (Positive Class)</h4>
+                <ul>
+                  <li><strong>excelente (+3.42):</strong> Brazilian buyers highlighting exceptional product quality or quick delivery.</li>
+                  <li><strong>recomendo (+3.15):</strong> Explicit purchase advocacy indicating high word-of-mouth potential.</li>
+                  <li><strong>rapida (+2.98) &amp; antes (+2.29):</strong> Arriving before the estimated delivery date is the strongest driver of 5-star customer ratings.</li>
+                  <li><strong>tudo (+2.51) &amp; parabens (+2.65):</strong> Full fulfillment satisfaction without transit defects.</li>
+                </ul>
+              </div>
+              <div class="deep-dive-box">
+                <h4>Top Dissatisfaction Complaints (Negative Class)</h4>
+                <ul>
+                  <li><strong>nao recebi (-3.12) &amp; aguardando (-2.32):</strong> Non-delivery and lost courier packages are the primary cause of 1-star reviews.</li>
+                  <li><strong>nao recomendo (-3.42):</strong> Strong brand damage signal triggered by broken promises.</li>
+                  <li><strong>pessima (-3.25) &amp; pessimo (-3.18):</strong> Extreme customer frustration with broken items or wrong orders.</li>
+                  <li><strong>ruim (-2.95) &amp; nao gostei (-2.36):</strong> Product quality mismatch compared to online listings.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Studio Tab 5: Benchmark Comparison -->
+        <div class="studio-panel hidden" id="tab-panel-benchmark">
+          <div class="graph-preview-card">
+            <div class="graph-header">
+              <div>
+                <h3>Performance Benchmark &amp; Baseline Summary</h3>
+                <p>Cross-model comparison across ROC-AUC, F1-Score, Precision, and Recall.</p>
+              </div>
+              <span class="kpi-chip blue">Benchmark</span>
+            </div>
+            <div class="graph-image-wrapper" title="Click to view full-resolution plot">
+              <img src="{{ url_for('static', filename='images/model_graphs/metrics_summary.png') }}" alt="Performance Metrics Benchmark" class="zoomable-graph" data-title="Model Performance Benchmark Comparison">
+              <div class="zoom-hint">🔍 Click to zoom</div>
+            </div>
+            <div class="cm-table-wrap" style="margin-top:20px;">
+              <table class="cm-table">
+                <thead>
+                  <tr>
+                    <th>Model / Pipeline</th>
+                    <th>Input Modality</th>
+                    <th>Evaluation Holdout</th>
+                    <th>ROC-AUC</th>
+                    <th>F1-Score</th>
+                    <th>Precision</th>
+                    <th>Recall</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>NLP Review Sentiment</strong></td>
+                    <td>Portuguese Text Comments</td>
+                    <td>7,417 held-out reviews</td>
+                    <td class="cell-tp">0.974</td>
+                    <td class="cell-tp">0.952</td>
+                    <td>0.951</td>
+                    <td>0.952</td>
+                  </tr>
+                  <tr>
+                    <td><strong>90-Day Churn Risk</strong></td>
+                    <td>Behavioral Telemetry (14 signals)</td>
+                    <td>14,084 held-out customers</td>
+                    <td class="cell-tn">0.738</td>
+                    <td>0.776</td>
+                    <td>0.998</td>
+                    <td>0.635</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Majority Baseline</strong></td>
+                    <td>Predict Constant Churn (Class 1)</td>
+                    <td>All held-out customer snapshots</td>
+                    <td>0.500</td>
+                    <td>0.997</td>
+                    <td>0.995</td>
+                    <td>1.000</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Studio Tab 6: Mentor Viva & Defense Guide -->
+        <div class="studio-panel hidden" id="tab-panel-viva">
+          <div class="graph-preview-card">
+            <div class="graph-header">
+              <div>
+                <h3>College Viva &amp; Evaluator Defense Masterclass</h3>
+                <p>Anticipated technical questions from mentors and external examiners with first-principles answers.</p>
+              </div>
+              <span class="kpi-chip amber">Viva Defense</span>
+            </div>
+
+            <div class="viva-accordion">
+              <div class="viva-item open">
+                <div class="viva-question">
+                  <span>Q1: What is the exact accuracy of your models, and why is ROC-AUC a better metric than raw accuracy for churn?</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+                <div class="viva-answer">
+                  <p><strong>First-Principles Answer:</strong><br>
+                  "Ma'am, for our NLP Portuguese Review Classifier, overall test accuracy is <strong>93.2%</strong> with an <strong>ROC-AUC of 0.974</strong> and an F1-Score of 0.952.</p>
+                  <p>However, for our 90-day e-commerce churn classifier, reporting raw accuracy would be academically misleading due to the severe class imbalance of non-contractual e-commerce: 99.48% of customer snapshots naturally cross the 90-day mark without a repeat order! A dummy model that blindly predicts 'churn' for everyone achieves 99.5% accuracy but zero practical utility. Therefore, we evaluate using <strong>ROC-AUC (0.738)</strong> and <strong>customer-grouped F1-score (0.776)</strong>, which measures true discriminative capability across all classification thresholds."</p>
+                  <div class="mentor-tip-box">
+                    💡 <strong>Evaluator Impression Tip:</strong> Mentors love when students understand the difference between raw accuracy and threshold-independent metrics like ROC-AUC in imbalanced domains.
+                  </div>
+                </div>
+              </div>
+
+              <div class="viva-item">
+                <div class="viva-question">
+                  <span>Q2: How did you validate your models without data leakage?</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+                <div class="viva-answer">
+                  <p><strong>First-Principles Answer:</strong><br>
+                  "We prevented data leakage at two critical stages:</p>
+                  <ol style="margin:6px 0; padding-left:20px;">
+                    <li><strong>Temporal Snapshot Integrity:</strong> When building historical customer snapshots, features are computed exclusively using orders placed on or before the snapshot date. Future orders are strictly reserved for labeling the outcome.</li>
+                    <li><strong>Customer-Grouped Holdout Partitioning:</strong> In e-commerce, active customers generate multiple monthly snapshots over time. If you run a standard random train/test split, snapshot 1 of Customer A lands in Train while snapshot 2 lands in Test, allowing the model to memorize customer identity. We used <code>GroupShuffleSplit</code> grouped on <code>customer_unique_id</code>: all snapshots for a given customer remain strictly in Train or strictly in Test."</li>
+                  </ol>
+                </div>
+              </div>
+
+              <div class="viva-item">
+                <div class="viva-question">
+                  <span>Q3: Why is churn defined as 90-day inactivity instead of a cancellation flag?</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+                <div class="viva-answer">
+                  <p><strong>First-Principles Answer:</strong><br>
+                  "Unlike subscription services (such as SaaS or streaming subscriptions) where customers explicitly click 'Cancel Subscription', e-commerce marketplaces (Amazon, Flipkart, Olist) operate under a <strong>non-contractual business model</strong>. Customers never cancel; they simply stop returning. In industry, the standard mathematical formulation is to establish an <em>Inactivity Window</em>. We chose 90 days: at 90 days without a purchase, a customer enters inactive status. For customers still within the 90 days, our classifier predicts the probability of crossing that threshold before a repeat order."</p>
+                </div>
+              </div>
+
+              <div class="viva-item">
+                <div class="viva-question">
+                  <span>Q4: Why are the reviews in Portuguese and how does your application process them?</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+                <div class="viva-answer">
+                  <p><strong>First-Principles Answer:</strong><br>
+                  "Olist is the largest Brazilian e-commerce marketplace, so all customer comments were submitted by real Brazilian consumers in Portuguese. Rather than discarding or translating the dataset offline, we built an authentic cross-lingual architecture:</p>
+                  <ul>
+                    <li>Our Scikit-Learn NLP classifier performs TF-IDF feature extraction directly on Portuguese n-grams to score sentiment natively with 0.974 ROC-AUC.</li>
+                    <li>When displaying executive recommendations or drafting service emails, our Google Gemini 3.5 Copilot translates the complaint into fluent English and maps the root cause to verified retention protocols."</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="viva-item">
+                <div class="viva-question">
+                  <span>Q5: How does the GenAI component (Gemini 3.5 + RAG) connect with the ML models?</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+                <div class="viva-answer">
+                  <p><strong>First-Principles Answer:</strong><br>
+                  "Standard LLMs hallucinate generic, untargeted advice when asked to save a customer. In RetainX, we built a deterministic <strong>Retrieval-Augmented Generation (RAG)</strong> pipeline:
+                  <ol style="margin:6px 0; padding-left:20px;">
+                    <li>The statistical ML model calculates the 90-day churn score and extracts top feature risk drivers (e.g. Delivery Delay = +0.18, Negative Review = 1 star).</li>
+                    <li>The RAG Retriever in <code>knowledge_base.py</code> scans domain playbooks and retrieves verified intervention protocols (e.g. Logistics Service Recovery Protocol, High Freight Voucher Strategy).</li>
+                    <li>These retrieved protocols, along with customer metrics and the translated Portuguese complaint, are injected into the Gemini 3.5 Flash context window, producing actionable, policy-compliant retention briefings and email drafts."</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- End View 2: #view-analytics -->
+
+    <!-- Lightbox Modal for Full-Res Graph Inspection -->
+    <div class="lightbox-modal" id="graph-lightbox" role="dialog" aria-modal="true" aria-label="Graph viewer">
+      <div class="lightbox-content">
+        <button type="button" class="lightbox-close-btn" id="lightbox-close" aria-label="Close image preview">&times;</button>
+        <img id="lightbox-img" src="" alt="Evaluation graph preview">
+      </div>
     </div>
 
     <!-- Clean Enterprise Footer -->
@@ -337,7 +869,7 @@
       aiConfigured: {{ ai_configured|tojson }}
     };
   </script>
-  <script src="{{ url_for('static', filename='retainx.js', v='7') }}" defer></script>
+  <script src="{{ url_for('static', filename='retainx.js', v='8') }}" defer></script>
 </body>
 </html>
 

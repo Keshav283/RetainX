@@ -1,92 +1,132 @@
 """
 E-Commerce Retention Knowledge Base & Retrieval System (RAG)
-Provides grounded, verified customer retention protocols tailored to specific e-commerce risk signals.
+Provides grounded, verified customer retention protocols tailored dynamically to specific e-commerce risk signals.
 """
 
-RETENTION_KNOWLEDGE_BASE = {
-    "delivery_delay": {
-        "title": "Logistics & Delivery Delay Service Recovery Protocol",
-        "condition": "Delivery delay exceeds estimated arrival date (>0 days)",
-        "protocol": [
-            "Proactive Apology & Tracking: Trigger an automated, sincere delivery apology notification acknowledging the carrier delay before the customer complains.",
-            "Shipping Fee Compensation: Credit the freight amount ($R$) or provide a 15% discount coupon applicable to their next order as compensation for transit friction.",
-            "VIP Fulfillment Flag: Flag the customer's account for priority courier dispatch and automated tracking SMS updates on all subsequent purchases."
-        ]
-    },
-    "freight_friction": {
-        "title": "High Shipping/Freight Cost Mitigation Strategy",
-        "condition": "Freight fee exceeds 20% of total order value",
-        "protocol": [
-            "Free Shipping Threshold Incentive: Offer a 'Free Shipping on Orders Over R$ 100' personalized voucher valid for 30 days.",
-            "Bundle / Multi-item Recommendation: Present product bundles that amortize shipping costs across multiple items in their preferred category.",
-            "Regional Fulfillment Routing: Highlight local merchant inventory within the customer's home state to minimize regional transit surcharges."
-        ]
-    },
-    "low_review_score": {
-        "title": "Dissatisfied Buyer & Negative Review Recovery Playbook",
-        "condition": "Customer rated order 1 or 2 stars or expressed negative sentiment",
-        "protocol": [
-            "Priority Customer Success Escalation: Route review feedback to the tier-2 customer support team for personal outreach within 24 hours.",
-            "Zero-Friction Resolution: Offer immediate no-return-required replacement or instant store credit if product arrived defective or non-compliant.",
-            "Seller Accountability: Audit the merchant fulfillment rating and temporarily down-rank repeat-offending sellers."
-        ]
-    },
-    "single_item_dropoff": {
-        "title": "Single-Purchase Conversion & Re-Engagement Cadence",
-        "condition": "Customer bought only 1 item and has not repurchased",
-        "protocol": [
-            "Lifecycle Re-Engagement Campaign: Send a curated replenishment / accessory email on Day 14 and Day 28 post-delivery based on category lifespan.",
-            "Loyalty Points Kickstart: Grant introductory reward points (e.g., 50 RetainX reward coins) expiring in 30 days to incentivize a second transaction.",
-            "Social Proof Showcase: Highlight top customer favorites and peer reviews in the same category."
-        ]
-    },
-    "high_order_value_retention": {
-        "title": "High-Value Account White-Glove Retention Playbook",
-        "condition": "Order value is in top tier (> R$ 250)",
-        "protocol": [
-            "Dedicated Support Channel: Provide priority WhatsApp / email concierge support for any future order inquiries.",
-            "Exclusive Tier Invitation: Automatically enroll customer into the Silver/Gold tier with permanent free shipping benefits.",
-            "Early Access Privileges: Invite customer to early flash sales and new collection previews."
-        ]
-    }
-}
-
-
-def retrieve_retention_protocols(customer_data, evidence):
-    """Select only guidance supported by fields in the current customer-history form."""
+def retrieve_retention_protocols(customer_data, evidence=None):
+    """
+    Dynamically select and customize verified e-commerce retention protocols
+    based on the customer's actual telemetry, logistics, spending, and review signals.
+    """
     retrieved = []
     days = customer_data.get("days_since_last_order", 0)
     threshold = customer_data.get("inactivity_days", 90)
-    if days >= threshold:
+    delay_days = customer_data.get("average_delivery_delay_days", 0)
+    review_score = customer_data.get("average_review_score", 0) or customer_data.get("last_review_score", 0)
+    order_val = customer_data.get("last_order_value", 0) or customer_data.get("average_order_value", 0)
+    freight_val = customer_data.get("last_freight_value", 0)
+    orders_count = customer_data.get("orders_in_history", 1)
+    installments = customer_data.get("last_payment_installments", 1)
+
+    # 1. Logistics & Delivery Delay Protocol
+    if delay_days > 0:
+        severity = "Severe" if delay_days >= 7 else "Moderate" if delay_days >= 3 else "Minor"
+        freight_credit = max(15.0, round(freight_val, 2)) if freight_val else 20.0
         retrieved.append({
-            "title": "90-Day Inactivity Re-Engagement",
-            "condition": f"Customer has been inactive for {days} days (threshold: {threshold}).",
+            "title": f"Logistics Service Recovery Protocol ({severity} Delay: +{delay_days:.1f} Days)",
+            "condition": f"Carrier delivered package {delay_days:.1f} days past the promised estimated date.",
             "protocol": [
-                "Check the last order and any unresolved service issue before contacting the customer.",
-                "Send one personalized re-engagement message tied to the customer’s prior purchase history.",
-                "Use a relevant incentive only when it fits the customer’s history and business policy.",
-            ],
+                f"Proactive Apology & Freight Credit: Automatically credit R$ {freight_credit:.2f} (freight compensation) or issue an immediate 20% discount code with personalized tracking apology.",
+                "Carrier Performance Escalation: Flag the regional fulfillment route and carrier partner for delivery SLA breach.",
+                "VIP Fulfillment Priority: Tag customer profile for priority dispatch and automated SMS delivery checkpoints on all subsequent orders."
+            ]
         })
-    elif days >= threshold * 0.7:
+    elif delay_days < -2:
         retrieved.append({
-            "title": "Approaching 90-Day Inactivity",
-            "condition": f"Customer is {days} days since last order, nearing the {threshold}-day threshold.",
+            "title": "Early Delivery Delight Protocol (Delivered Ahead of Schedule)",
+            "condition": f"Order arrived {abs(delay_days):.1f} days earlier than estimated delivery date.",
             "protocol": [
-                "Review the most recent order for a clear friction point.",
-                "Send a timely, relevant reminder before the inactivity threshold.",
-            ],
+                "Positive Sentiment Check-in: Send a warm 'How was your delivery?' pulse email while the positive delivery impression is fresh.",
+                "Referral Prompt: Provide a 'Share with a Friend' referral link offering R$ 25 off for both the referee and the customer."
+            ]
         })
 
-    if customer_data.get("average_review_score", 5) and customer_data["average_review_score"] <= 2.5:
-        retrieved.append(RETENTION_KNOWLEDGE_BASE["low_review_score"])
-    if customer_data.get("average_delivery_delay_days", 0) > 0:
-        retrieved.append(RETENTION_KNOWLEDGE_BASE["delivery_delay"])
-    if customer_data.get("orders_in_history", 0) <= 1:
-        retrieved.append(RETENTION_KNOWLEDGE_BASE["single_item_dropoff"])
-    if not retrieved:
+    # 2. Negative Review & Sentiment Playbook
+    if review_score and review_score <= 2:
         retrieved.append({
-            "title": "Maintain Relevant Customer Engagement",
-            "condition": "Customer is below the inactivity threshold and no strong prior friction signal is present.",
-            "protocol": ["Continue normal, relevant lifecycle communication based on prior purchases."],
+            "title": f"Dissatisfied Customer Service Recovery Playbook ({review_score}-Star Low Rating)",
+            "condition": f"Customer gave an adverse rating of {review_score}/5 stars.",
+            "protocol": [
+                "Tier-2 Customer Success Outreach: Trigger immediate phone or personalized WhatsApp/email concierge outreach within 24 hours.",
+                "Zero-Friction Resolution: Offer instant replacement or no-return-required store credit if items arrived broken, damaged, or incorrect.",
+                "Merchant Review Escalation: Audit seller compliance and request seller remediation before seller rating drops below marketplace threshold."
+            ]
         })
+    elif review_score >= 4:
+        retrieved.append({
+            "title": f"Advocate Loyalty & Repeat Engagement Protocol ({review_score}-Star Highly Satisfied)",
+            "condition": f"Customer rated their purchase highly ({review_score}/5 stars).",
+            "protocol": [
+                "Social Proof & Photo Review Reward: Invite customer to submit a photo review in exchange for loyalty bonus points.",
+                "Category Affinity Recommendation: Suggest complementary accessories or replenishment items based on their past purchase."
+            ]
+        })
+
+    # 3. Freight Cost / Basket Price Friction Protocol
+    if order_val > 0 and freight_val > 0:
+        freight_ratio = freight_val / (order_val + freight_val)
+        if freight_ratio >= 0.20 or freight_val >= 35.0:
+            retrieved.append({
+                "title": f"High Shipping Cost Friction Mitigation (Freight: R$ {freight_val:.2f}, {freight_ratio:.1%} of basket)",
+                "condition": f"Freight charge represents {freight_ratio:.1%} of total order expenditure.",
+                "protocol": [
+                    "Free Shipping Threshold Incentive: Issue a 'Free Shipping on Your Next Order Over R$ 99' voucher valid for 30 days.",
+                    "Regional Inventory Routing: Highlight local merchants situated in the customer's home state to reduce inter-state courier freight surcharges.",
+                    "Bundle Suggestion: Educate customer on multi-item cart bundling to amortize fixed freight costs across multiple items."
+                ]
+            })
+
+    # 4. Inactivity & Lifecycle Win-back Protocols
+    if days >= threshold:
+        retrieved.append({
+            "title": f"90-Day Lapsed Buyer Reactivation Campaign (Inactive for {days} Days)",
+            "condition": f"Customer has crossed the {threshold}-day inactivity mark without a repeat order.",
+            "protocol": [
+                "Compelling Reactivation Offer: Send a high-impact 'We miss you' reactivation campaign with an exclusive R$ 30 or 20% discount coupon.",
+                "Catalog Update & New Arrivals: Showcase top trending items in their favorite category released since their last visit.",
+                "Preference Pulse Survey: Ask a 1-click survey ('Was there a problem with your last order?') to diagnose permanent churn reasons."
+            ]
+        })
+    elif days >= threshold * 0.65:
+        remaining = threshold - days
+        retrieved.append({
+            "title": f"Imminent Inactivity Win-Back Cadence ({days} Days Inactive, {remaining} Days to 90-Day Churn)",
+            "condition": f"Customer is approaching the {threshold}-day inactivity threshold ({remaining} days remaining).",
+            "protocol": [
+                "Time-Sensitive Reminder Offer: Trigger a personalized re-engagement email with an incentive expiring in 7 days.",
+                "Cart Abandonment / Category Lifespan Follow-up: Cross-reference average product replenishment cycles and suggest restocking."
+            ]
+        })
+    else:
+        retrieved.append({
+            "title": f"Active Customer Lifecycle Nurturing ({days} Days Since Last Order)",
+            "condition": f"Customer is well within the active engagement window ({days} of {threshold} days).",
+            "protocol": [
+                "Loyalty Program Introduction: Inform customer of points accumulated and progress towards next VIP perk tier.",
+                "Personalized Content & New Releases: Deliver editorial, educational, or seasonal recommendations tailored to their prior category."
+            ]
+        })
+
+    # 5. Account Value & Installment Tier
+    if order_val >= 200 or customer_data.get("total_historical_spend", 0) >= 400:
+        retrieved.append({
+            "title": f"High-Value VIP Account White-Glove Playbook (Spend: R$ {order_val:.2f})",
+            "condition": "Customer basket size or historical spend qualifies for VIP tier.",
+            "protocol": [
+                "Priority WhatsApp Support: Provide direct access to a dedicated retention concierge for fast query handling.",
+                "Exclusive Flash Sale Previews: Grant 24-hour early access to upcoming marketplace promotional events.",
+                "Custom Loyalty Milestone Gift: Add complimentary gift or double reward points on their subsequent checkout."
+            ]
+        })
+
+    if installments >= 4:
+        retrieved.append({
+            "title": f"Financed Purchase Satisfaction Protocol ({installments} Installments)",
+            "condition": f"Customer selected {installments} monthly payment installments.",
+            "protocol": [
+                "Post-Purchase Confidence Assurance: Reassure buyer of warranty and platform buyer-protection while monthly installment payments continue.",
+                "Value Affirmation: Highlight positive peer reviews and longevity of purchased product to eliminate post-purchase buyer's remorse."
+            ]
+        })
+
     return retrieved
