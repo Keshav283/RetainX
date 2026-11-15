@@ -6,12 +6,13 @@ from pathlib import Path
 import joblib
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score
+from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score, confusion_matrix
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 ROOT = Path(__file__).resolve().parent
 DATA_DIR = ROOT / "datasets" / "olist"
+SYNTHETIC_CSV = ROOT / "olist_synthetic_ecommerce_churn_100k_INR_bimodal.csv"
 MODEL_DIR = ROOT / "models"
 MODEL_DIR.mkdir(parents=True, exist_ok=True)
 RANDOM_SEED = 42
@@ -30,9 +31,13 @@ def parse_date(value):
 
 
 def load_customer_orders():
-    """Join Olist orders to stable customer IDs and historical order signals."""
+    """Join Olist orders to stable customer IDs and historical order signals (kept for reference/tests)."""
     customer_ids = {}
-    with open(DATA_DIR / "olist_customers_dataset.csv", encoding="utf-8") as stream:
+    cust_file = DATA_DIR / "olist_customers_dataset.csv"
+    if not cust_file.is_file():
+        return {}
+
+    with open(cust_file, encoding="utf-8") as stream:
         for row in csv.DictReader(stream):
             customer_ids[row["customer_id"]] = row["customer_unique_id"]
 
@@ -94,8 +99,10 @@ def load_customer_orders():
 
 
 def make_snapshots(customer_orders, dataset_end, step_days=30):
-    """Create monthly customer snapshots with only past data in the features."""
+    """Create customer snapshots (kept for reference and test suite compatibility)."""
     snapshots, labels, groups = [], [], []
+    if not customer_orders:
+        return snapshots, labels, groups
     start = min(order["date"] for rows in customer_orders.values() for order in rows)
     cutoff = dataset_end - timedelta(days=INACTIVITY_DAYS)
     snapshot_date = start + timedelta(days=INACTIVITY_DAYS - 1)
@@ -107,7 +114,6 @@ def make_snapshots(customer_orders, dataset_end, step_days=30):
                 continue
             last_order = prior[-1]
             recency = (snapshot_date - last_order["date"]).days
-            # Active customer snapshot: predict whether they will cross 90 inactive days soon.
             if recency >= INACTIVITY_DAYS:
                 continue
             future_orders = [
@@ -147,75 +153,155 @@ def make_snapshots(customer_orders, dataset_end, step_days=30):
     return snapshots, labels, groups
 
 
+def extract_row_features(row):
+    """Normalize row from synthetic 100k INR dataset or user upload into the 14 standard features."""
+    shares = {
+        "credit_card": float(row.get("credit_card_payment_share") or 0),
+        "boleto": float(row.get("boleto_payment_share") or 0),
+        "voucher": float(row.get("voucher_payment_share") or 0),
+        "debit_card": float(row.get("debit_card_payment_share") or 0),
+    }
+    top_ptype = max(shares, key=shares.get) if any(shares.values()) else row.get("last_payment_type", "credit_card")
+    avg_delivery = float(row.get("avg_delivery_days") or row.get("average_delivery_duration_days") or 7.0)
+    late_rate = float(row.get("late_delivery_rate") or 0.0)
+    delay_days = float(row.get("average_delivery_delay_days") or (late_rate * avg_delivery))
+
+    return {
+        "days_since_last_order": float(row.get("recency_days_at_cutoff") or row.get("days_since_last_order") or 0),
+        "orders_in_history": float(row.get("orders_4y") or row.get("orders_in_history") or 1),
+        "days_since_first_order": float(row.get("tenure_days_feature_window") or row.get("days_since_first_order") or 365),
+        "average_order_value": float(row.get("avg_order_value") or row.get("average_order_value") or 0),
+        "total_historical_spend": float(row.get("total_spend_4y") or row.get("total_historical_spend") or 0),
+        "average_items_per_order": float(row.get("avg_items_per_order") or row.get("average_items_per_order") or 1),
+        "last_order_value": float(row.get("median_order_value") or row.get("last_order_value") or row.get("avg_order_value") or 0),
+        "last_freight_value": float(row.get("avg_freight_per_order") or row.get("last_freight_value") or 0),
+        "last_payment_installments": float(row.get("avg_payment_installments") or row.get("last_payment_installments") or 1),
+        "last_payment_type": top_ptype,
+        "average_review_score": float(row.get("avg_review_rating") or row.get("average_review_score") or 4.0),
+        "last_review_score": float(row.get("avg_review_rating") or row.get("last_review_score") or 4.0),
+        "average_delivery_delay_days": delay_days,
+        "average_delivery_duration_days": avg_delivery,
+    }
+
+
 def build_ecommerce_model():
-    print(f"Loading Olist datasets from {DATA_DIR}...")
-    customer_orders = load_customer_orders()
-    dataset_end = max(order["date"] for rows in customer_orders.values() for order in rows)
-    features, labels, groups = make_snapshots(customer_orders, dataset_end)
-    if not features or len(set(labels)) < 2:
-        raise RuntimeError("Not enough labeled customer snapshots to train the model.")
+    """Train the supervised customer churn model on the 100k synthetic INR e-commerce dataset."""
+    if SYNTHETIC_CSV.is_file():
+        print(f"Loading 100,000 synthetic INR customer cohort from {SYNTHETIC_CSV}...")
+        features = []
+        labels = []
+        with open(SYNTHETIC_CSV, mode="r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                features.append(extract_row_features(row))
+                labels.append(int(float(row.get("churn") or 0)))
 
-    print(f"Built {len(features):,} customer snapshots across {len(set(groups)):,} customers.")
-    print(f"90-day threshold outcome: {sum(labels):,} customers cross the inactivity threshold; {len(labels)-sum(labels):,} order again first.")
+        print(f"Loaded {len(features):,} customer rows (Retained: {len(labels)-sum(labels):,}, Churned: {sum(labels):,}).")
+        train_features, test_features, y_train, y_test = train_test_split(
+            features, labels, test_size=0.2, random_state=RANDOM_SEED, stratify=labels
+        )
 
-    # Hold out entire customers so repeated snapshots cannot leak across partitions.
-    train_customers, test_customers = train_test_split(
-        sorted(set(groups)), test_size=0.2, random_state=RANDOM_SEED
-    )
-    train_set, test_set = set(train_customers), set(test_customers)
-    fit_idx = [i for i, customer in enumerate(groups) if customer in train_set]
-    test_idx = [i for i, customer in enumerate(groups) if customer in test_set]
+        vec = DictVectorizer(sparse=False)
+        x_train = vec.fit_transform(train_features)
+        x_test = vec.transform(test_features)
 
-    vec = DictVectorizer(sparse=False)
-    x_train = vec.fit_transform([features[i] for i in fit_idx])
-    x_test = vec.transform([features[i] for i in test_idx])
-    y_train = [labels[i] for i in fit_idx]
-    y_test = [labels[i] for i in test_idx]
-    scaler = StandardScaler()
-    x_train = scaler.fit_transform(x_train)
-    x_test = scaler.transform(x_test)
-    clf = LogisticRegression(class_weight="balanced", max_iter=1000, random_state=RANDOM_SEED, C=1.0)
-    clf.fit(x_train, y_train)
+        scaler = StandardScaler()
+        x_train = scaler.fit_transform(x_train)
+        x_test = scaler.transform(x_test)
 
-    probs = clf.predict_proba(x_test)[:, 1]
-    threshold = 0.5
-    preds = (probs >= threshold).astype(int)
-    metrics = {
-        "roc_auc": round(roc_auc_score(y_test, probs), 3),
-        "f1": round(f1_score(y_test, preds, zero_division=0), 3),
-        "precision": round(precision_score(y_test, preds, zero_division=0), 3),
-        "recall": round(recall_score(y_test, preds, zero_division=0), 3),
-    }
-    print("90-day threshold model -> " + ", ".join(f"{name}: {value:.3f}" for name, value in metrics.items()))
-    print(f"Majority baseline F1: {f1_score(y_test, [1] * len(y_test), zero_division=0):.3f}; positive rate: {sum(y_test)/len(y_test):.3%}")
+        clf = LogisticRegression(class_weight="balanced", max_iter=1000, random_state=RANDOM_SEED, C=1.0)
+        clf.fit(x_train, y_train)
 
-    bundle = {
-        "vectorizer": vec,
-        "scaler": scaler,
-        "classifier": clf,
-        "decision_threshold": threshold,
-        "majority_baseline_f1": round(f1_score(y_test, [1] * len(y_test), zero_division=0), 3),
-        "label_name": "Risk of reaching 90 days without a repeat purchase",
-        "horizon": "Active customer approaching the 90-day inactivity threshold",
-        "inactivity_days": INACTIVITY_DAYS,
-        "prediction_window_days": 90,
-        "dataset_end": dataset_end.strftime("%Y-%m-%d"),
-        "metrics": metrics,
-        "evaluation_split": "Customer-grouped holdout: all snapshots for a customer stay in one split.",
-        "positive_snapshot_rate": round(sum(labels) / len(labels), 4),
-        "training_customers": len(train_customers),
-        "test_customers": len(test_customers),
-        "limitations": "Olist is historical and ends in 2018. At an active-customer snapshot, predict whether the customer crosses 90 days since last order before another purchase. Full 90-day follow-up is required. The dataset is historical and contains very few repeat purchases, so this remains a limited proxy. Metrics are customer-grouped, not a future calendar-time validation. This model is not causal.",
-        "feature_definitions": {
-            "days_since_last_order": "Days between snapshot date and the customer's most recent prior order.",
-            "orders_in_history": "Number of delivered orders observed for the customer up to the snapshot.",
-            "days_since_first_order": "Customer tenure in days at the snapshot.",
-            "average_review_score": "Mean star rating on prior orders; zero when unavailable.",
-            "average_delivery_delay_days": "Mean actual minus estimated delivery days on prior orders.",
-        },
-    }
-    joblib.dump(bundle, MODEL_DIR / "ecommerce.joblib")
-    print(f"Saved 90-day churn model to {MODEL_DIR / 'ecommerce.joblib'}")
+        probs = clf.predict_proba(x_test)[:, 1]
+        threshold = 0.5
+        preds = (probs >= threshold).astype(int)
+
+        cm = confusion_matrix(y_test, preds)
+        metrics = {
+            "roc_auc": round(roc_auc_score(y_test, probs), 3),
+            "f1": round(f1_score(y_test, preds, zero_division=0), 3),
+            "precision": round(precision_score(y_test, preds, zero_division=0), 3),
+            "recall": round(recall_score(y_test, preds, zero_division=0), 3),
+        }
+        print("100k INR Churn Model -> " + ", ".join(f"{name}: {value:.3f}" for name, value in metrics.items()))
+        print(f"Confusion Matrix (Test 20,000): TN={cm[0,0]}, FP={cm[0,1]}, FN={cm[1,0]}, TP={cm[1,1]}")
+
+        bundle = {
+            "vectorizer": vec,
+            "scaler": scaler,
+            "classifier": clf,
+            "decision_threshold": threshold,
+            "majority_baseline_f1": round(f1_score(y_test, [1] * len(y_test), zero_division=0), 3),
+            "label_name": "No repeat order within the next 90 days",
+            "horizon": "90-day customer churn forecast calibrated on 100,000 INR e-commerce records",
+            "inactivity_days": INACTIVITY_DAYS,
+            "prediction_window_days": 90,
+            "dataset_end": "2026-11-15",
+            "metrics": metrics,
+            "confusion_matrix": {
+                "tn": int(cm[0, 0]),
+                "fp": int(cm[0, 1]),
+                "fn": int(cm[1, 0]),
+                "tp": int(cm[1, 1]),
+                "total_test": len(y_test),
+                "repeat_specificity": round(float(cm[0, 0] / (cm[0, 0] + cm[0, 1])) * 100, 1),
+                "churn_recall": round(float(cm[1, 1] / (cm[1, 0] + cm[1, 1])) * 100, 1),
+            },
+            "evaluation_split": "Held-out 20% stratified test split from 100,000 INR e-commerce orders.",
+            "positive_snapshot_rate": round(sum(labels) / len(labels), 4),
+            "training_customers": len(train_features),
+            "test_customers": len(test_features),
+            "limitations": "Trained on synthetic 100,000 INR customer dataset with bimodal spend distributions (DMart / Marketplace retail proxy). Feature weights represent observational associations with 90-day churn.",
+            "feature_definitions": {
+                "days_since_last_order": "Days between customer order cutoff and most recent purchase.",
+                "orders_in_history": "Total completed orders observed for the customer.",
+                "days_since_first_order": "Customer relationship duration in days.",
+                "average_order_value": "Mean customer transaction basket value (INR).",
+                "average_review_score": "Mean star rating (1-5 scale) across order history.",
+                "average_delivery_delay_days": "Mean days delivered past promised SLA date.",
+            },
+        }
+        joblib.dump(bundle, MODEL_DIR / "ecommerce.joblib")
+        print(f"Saved 100k churn model to {MODEL_DIR / 'ecommerce.joblib'}")
+        return bundle
+
+    else:
+        print("Synthetic dataset not found; falling back to Olist raw CSVs...")
+        customer_orders = load_customer_orders()
+        dataset_end = max(order["date"] for rows in customer_orders.values() for order in rows)
+        features, labels, groups = make_snapshots(customer_orders, dataset_end)
+        train_customers, test_customers = train_test_split(
+            sorted(set(groups)), test_size=0.2, random_state=RANDOM_SEED
+        )
+        train_set, test_set = set(train_customers), set(test_customers)
+        fit_idx = [i for i, customer in enumerate(groups) if customer in train_set]
+        test_idx = [i for i, customer in enumerate(groups) if customer in test_set]
+
+        vec = DictVectorizer(sparse=False)
+        x_train = vec.fit_transform([features[i] for i in fit_idx])
+        x_test = vec.transform([features[i] for i in test_idx])
+        scaler = StandardScaler()
+        x_train = scaler.fit_transform(x_train)
+        x_test = scaler.transform(x_test)
+        clf = LogisticRegression(class_weight="balanced", max_iter=1000, random_state=RANDOM_SEED, C=1.0)
+        clf.fit(x_train, [labels[i] for i in fit_idx])
+        probs = clf.predict_proba(x_test)[:, 1]
+        metrics = {
+            "roc_auc": round(roc_auc_score([labels[i] for i in test_idx], probs), 3),
+            "f1": round(f1_score([labels[i] for i in test_idx], (probs >= 0.5).astype(int), zero_division=0), 3),
+            "precision": round(precision_score([labels[i] for i in test_idx], (probs >= 0.5).astype(int), zero_division=0), 3),
+            "recall": round(recall_score([labels[i] for i in test_idx], (probs >= 0.5).astype(int), zero_division=0), 3),
+        }
+        bundle = {
+            "vectorizer": vec, "scaler": scaler, "classifier": clf, "decision_threshold": 0.5,
+            "metrics": metrics, "inactivity_days": INACTIVITY_DAYS,
+            "training_customers": len(train_customers), "test_customers": len(test_customers),
+            "label_name": "Risk of reaching 90 days without a repeat purchase",
+            "horizon": "Active customer approaching the 90-day inactivity threshold",
+            "limitations": "Olist historical baseline",
+        }
+        joblib.dump(bundle, MODEL_DIR / "ecommerce.joblib")
+        return bundle
 
 
 if __name__ == "__main__":

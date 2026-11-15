@@ -191,10 +191,64 @@ class RetainXApiTests(unittest.TestCase):
         data = response.get_json()
         self.assertIn("ecommerce", data)
         self.assertIn("reviews", data)
+        self.assertIn("segmentation", data)
         self.assertIn("graphs", data)
-        self.assertTrue(len(data["graphs"]) >= 4)
+        self.assertTrue(len(data["graphs"]) >= 7)
         self.assertIn("confusion_matrix", data["ecommerce"])
         self.assertIn("confusion_matrix", data["reviews"])
+
+    def test_batch_predict_returns_aggregate_retention_and_segments(self):
+        csv_data = (
+            "customer_id,days_since_last_order,orders_in_history,days_since_first_order,"
+            "average_order_value,total_historical_spend,average_items_per_order,last_order_value,"
+            "last_freight_value,last_payment_installments,last_payment_type,average_review_score,"
+            "last_review_score,average_delivery_delay_days,average_delivery_duration_days\n"
+            "CUST_001,15,10,200,1500,15000,2,1500,50,1,credit_card,5,5,0,3\n"
+            "CUST_002,110,1,110,600,600,1,600,80,1,boleto,1,1,10,25\n"
+        )
+        response = self.client.post(
+            "/api/batch-predict",
+            data={"file": (io.BytesIO(csv_data.encode("utf-8")), "customers.csv")},
+            content_type="multipart/form-data",
+        )
+        self.assertEqual(response.status_code, 200)
+        body = response.get_json()
+        self.assertEqual(body["total_customers"], 2)
+        self.assertIn("summary", body)
+        self.assertIn("will_retain", body["summary"])
+        self.assertIn("will_churn", body["summary"])
+        self.assertIn("risk_distribution", body)
+        self.assertIn("segment_distribution", body)
+        self.assertEqual(len(body["top_at_risk_customers"]), 2)
+
+    def test_batch_export_returns_csv(self):
+        csv_data = (
+            "customer_id,days_since_last_order,orders_in_history\n"
+            "CUST_001,20,5\n"
+        )
+        response = self.client.post(
+            "/api/batch-predict/export",
+            data={"file": (io.BytesIO(csv_data.encode("utf-8")), "test.csv")},
+            content_type="multipart/form-data",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("text/csv", response.content_type)
+        self.assertIn(b"retainx_predicted_outcome", response.data)
+        self.assertIn(b"retainx_churn_probability_percent", response.data)
+
+    def test_sample_dataset_endpoint(self):
+        response = self.client.get("/api/sample-dataset")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("text/csv", response.content_type)
+        self.assertIn(b"customer_id", response.data)
+
+    def test_segmentation_stats_endpoint(self):
+        response = self.client.get("/api/segmentation-stats")
+        self.assertEqual(response.status_code, 200)
+        body = response.get_json()
+        self.assertIn("cluster_profiles", body)
+        self.assertIn("elbow_data", body)
+        self.assertIn("optimal_k", body)
 
 
 if __name__ == "__main__":

@@ -1,12 +1,13 @@
 """
 E-Commerce Retention Knowledge Base & Retrieval System (RAG)
-Provides grounded, verified customer retention protocols tailored dynamically to specific e-commerce risk signals.
+Provides grounded, verified customer retention protocols tailored dynamically to specific e-commerce risk signals and K-Means behavioral segments.
 """
 
-def retrieve_retention_protocols(customer_data, evidence=None):
+def retrieve_retention_protocols(customer_data, evidence=None, segment=None):
     """
     Dynamically select and customize verified e-commerce retention protocols
-    based on the customer's actual telemetry, logistics, spending, and review signals.
+    based on the customer's actual telemetry, logistics, spending, review signals,
+    and unsupervised K-Means customer segmentation profile.
     """
     retrieved = []
     days = customer_data.get("days_since_last_order", 0)
@@ -21,14 +22,14 @@ def retrieve_retention_protocols(customer_data, evidence=None):
     # 1. Logistics & Delivery Delay Protocol
     if delay_days > 0:
         severity = "Severe" if delay_days >= 7 else "Moderate" if delay_days >= 3 else "Minor"
-        freight_credit = max(15.0, round(freight_val, 2)) if freight_val else 20.0
+        freight_credit = max(50.0, round(freight_val, 2)) if freight_val else 100.0
         retrieved.append({
             "title": f"Logistics Service Recovery Protocol ({severity} Delay: +{delay_days:.1f} Days)",
             "condition": f"Carrier delivered package {delay_days:.1f} days past the promised estimated date.",
             "protocol": [
-                f"Proactive Apology & Freight Credit: Automatically credit R$ {freight_credit:.2f} (freight compensation) or issue an immediate 20% discount code with personalized tracking apology.",
-                "Carrier Performance Escalation: Flag the regional fulfillment route and carrier partner for delivery SLA breach.",
-                "VIP Fulfillment Priority: Tag customer profile for priority dispatch and automated SMS delivery checkpoints on all subsequent orders."
+                f"Proactive Apology & Freight Credit: Automatically credit ₹{freight_credit:.2f} (freight reimbursement) or issue an immediate 20% discount coupon with personalized tracking apology.",
+                "Carrier Performance Escalation: Flag regional delivery route and carrier partner for delivery SLA breach.",
+                "VIP Fulfillment Priority: Tag customer profile for priority dispatch and automated SMS delivery checkpoints on subsequent orders."
             ]
         })
     elif delay_days < -2:
@@ -36,8 +37,8 @@ def retrieve_retention_protocols(customer_data, evidence=None):
             "title": "Early Delivery Delight Protocol (Delivered Ahead of Schedule)",
             "condition": f"Order arrived {abs(delay_days):.1f} days earlier than estimated delivery date.",
             "protocol": [
-                "Positive Sentiment Check-in: Send a warm 'How was your delivery?' pulse email while the positive delivery impression is fresh.",
-                "Referral Prompt: Provide a 'Share with a Friend' referral link offering R$ 25 off for both the referee and the customer."
+                "Positive Sentiment Check-in: Send a warm 'How was your delivery?' pulse message while the positive delivery impression is fresh.",
+                "Referral Prompt: Provide a 'Share with a Friend' referral link offering ₹150 off for both the referee and the customer."
             ]
         })
 
@@ -67,12 +68,12 @@ def retrieve_retention_protocols(customer_data, evidence=None):
         freight_ratio = freight_val / (order_val + freight_val)
         if freight_ratio >= 0.20 or freight_val >= 35.0:
             retrieved.append({
-                "title": f"High Shipping Cost Friction Mitigation (Freight: R$ {freight_val:.2f}, {freight_ratio:.1%} of basket)",
+                "title": f"High Shipping Cost Friction Mitigation (Freight: ₹{freight_val:.2f}, {freight_ratio:.1%} of basket)",
                 "condition": f"Freight charge represents {freight_ratio:.1%} of total order expenditure.",
                 "protocol": [
-                    "Free Shipping Threshold Incentive: Issue a 'Free Shipping on Your Next Order Over R$ 99' voucher valid for 30 days.",
+                    "Free Shipping Threshold Incentive: Issue a 'Free Shipping on Your Next Order Over ₹499' voucher valid for 30 days.",
                     "Regional Inventory Routing: Highlight local merchants situated in the customer's home state to reduce inter-state courier freight surcharges.",
-                    "Bundle Suggestion: Educate customer on multi-item cart bundling to amortize fixed freight costs across multiple items."
+                    "Bundle Suggestion: Educate customer on multi-item cart bundling to amortize fixed delivery costs across multiple items."
                 ]
             })
 
@@ -82,7 +83,7 @@ def retrieve_retention_protocols(customer_data, evidence=None):
             "title": f"90-Day Lapsed Buyer Reactivation Campaign (Inactive for {days} Days)",
             "condition": f"Customer has crossed the {threshold}-day inactivity mark without a repeat order.",
             "protocol": [
-                "Compelling Reactivation Offer: Send a high-impact 'We miss you' reactivation campaign with an exclusive R$ 30 or 20% discount coupon.",
+                "Compelling Reactivation Offer: Send a high-impact 'We miss you' reactivation campaign with an exclusive ₹200 or 20% discount coupon.",
                 "Catalog Update & New Arrivals: Showcase top trending items in their favorite category released since their last visit.",
                 "Preference Pulse Survey: Ask a 1-click survey ('Was there a problem with your last order?') to diagnose permanent churn reasons."
             ]
@@ -108,9 +109,9 @@ def retrieve_retention_protocols(customer_data, evidence=None):
         })
 
     # 5. Account Value & Installment Tier
-    if order_val >= 200 or customer_data.get("total_historical_spend", 0) >= 400:
+    if order_val >= 500 or customer_data.get("total_historical_spend", 0) >= 2000:
         retrieved.append({
-            "title": f"High-Value VIP Account White-Glove Playbook (Spend: R$ {order_val:.2f})",
+            "title": f"High-Value VIP Account White-Glove Playbook (Spend: ₹{order_val:.2f})",
             "condition": "Customer basket size or historical spend qualifies for VIP tier.",
             "protocol": [
                 "Priority WhatsApp Support: Provide direct access to a dedicated retention concierge for fast query handling.",
@@ -128,5 +129,49 @@ def retrieve_retention_protocols(customer_data, evidence=None):
                 "Value Affirmation: Highlight positive peer reviews and longevity of purchased product to eliminate post-purchase buyer's remorse."
             ]
         })
+
+    # 6. Unsupervised K-Means Behavioral Segment Protocols
+    if segment and isinstance(segment, dict):
+        seg_name = segment.get("name") or segment.get("short_name", "")
+        if "VIP" in seg_name or "Champions" in seg_name:
+            retrieved.append({
+                "title": "VIP Champions White-Glove Retention Playbook (Cluster 3)",
+                "condition": "Customer identified by K-Means as Top-Tier Enterprise Champion (High AOV & Spend).",
+                "protocol": [
+                    "Direct Account Manager: Assign dedicated VIP desk relationship manager with zero-hold WhatsApp support.",
+                    "Zero-SLA Delivery Guarantee: All future orders shipped via express courier with waived freight fees.",
+                    "Exclusive Member Preview: Early 24-hour access to high-demand brand drops and seasonal sales."
+                ]
+            })
+        elif "Transit" in seg_name or "Delayed" in seg_name:
+            retrieved.append({
+                "title": "Logistics Friction Remediation Playbook (Cluster 1)",
+                "condition": "Customer grouped in high delivery duration & delay cluster.",
+                "protocol": [
+                    "Automated Transit Refund: Issue ₹100 grocery voucher code with an apology for previous courier delays.",
+                    "Fulfillment Re-assignment: Route subsequent packages via premier tier-1 national logistics partners.",
+                    "Priority Packing Flag: Flag order at warehouse packing line for immediate same-day dispatch."
+                ]
+            })
+        elif "At-Risk" in seg_name or "Lapsing" in seg_name:
+            retrieved.append({
+                "title": "At-Risk Lapsed Buyer Re-Activation Protocol (Cluster 2)",
+                "condition": "Customer classified in 60+ days dormancy cluster.",
+                "protocol": [
+                    "Time-Sensitive Come-Back Credit: Issue ₹250 flat discount voucher valid for 7 days on minimum cart ₹999.",
+                    "Restocking Notification: Send automated reminder for regularly purchased household categories.",
+                    "Free Delivery Perk: Waive delivery fee on their next re-activation order."
+                ]
+            })
+        elif "Active" in seg_name or "Regulars" in seg_name:
+            retrieved.append({
+                "title": "Active Regular Customer Loyalty Cadence (Cluster 0)",
+                "condition": "Customer exhibits healthy repeat purchase frequency and low recency.",
+                "protocol": [
+                    "Tier Progression Milestone: Reward order with DMart Plus loyalty credits towards free grocery items.",
+                    "Cross-Category Exploration: Introduce personalized recommendations in complementary categories.",
+                    "Referral Bonus: Give ₹150 for every friend who places their first order."
+                ]
+            })
 
     return retrieved

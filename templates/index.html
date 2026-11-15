@@ -1,25 +1,24 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#08090c">
-  <meta name="description" content="RetainX - E-Commerce Customer Churn Intelligence & AI Retention Copilot">
-  <title>RetainX Enterprise | E-Commerce Churn Intelligence & Retention Copilot</title>
+  <meta name="theme-color" content="#080b12">
+  <meta name="description" content="RetainX - Enterprise Customer Retention Intelligence & Behavioral AI">
+  <title>RetainX | Customer Retention Intelligence &amp; Behavioral AI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;850&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <script>
     (function() {
       try {
         var saved = localStorage.getItem('retainx_theme');
-        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        var theme = saved || (prefersDark ? 'dark' : 'light');
+        var theme = saved || 'light';
         document.documentElement.setAttribute('data-theme', theme);
       } catch(e) {}
     })();
   </script>
-  <link rel="stylesheet" href="{{ url_for('static', filename='retainx.css', v='8') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='retainx.css') }}?v=24">
 </head>
 <body>
   <div class="ambient-glow glow-1" aria-hidden="true"></div>
@@ -29,24 +28,53 @@
   <header class="app-header">
     <div class="header-container">
       <div class="brand-group">
-        <div class="brand-logo">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        <button type="button" class="sidebar-toggle-btn" id="sidebar-toggle" aria-label="Collapse sidebar" title="Collapse sidebar">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/><path d="M4 5v14"/></svg>
+        </button>
+        <div class="brand-logo" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+            <defs>
+              <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#6366f1"/>
+                <stop offset="100%" stop-color="#06b6d4"/>
+              </linearGradient>
+              <linearGradient id="logo-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#4f46e5" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.05"/>
+              </linearGradient>
+            </defs>
+            <rect width="32" height="32" rx="8" fill="url(#logo-glow)" stroke="rgba(99,102,241,0.3)" stroke-width="1.5"/>
+            <path d="M16 6L25 11.2V21.8L16 27L7 21.8V11.2L16 6Z" stroke="url(#logo-grad)" stroke-width="2" stroke-linejoin="round"/>
+            <circle cx="16" cy="16" r="3.5" fill="url(#logo-grad)"/>
+            <path d="M16 9.5V12.5M16 19.5V22.5M10.5 13L13 14.5M19 17.5L21.5 19M10.5 19L13 17.5M19 14.5L21.5 13" stroke="#818cf8" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
         </div>
         <div class="brand-text">
-          <span class="brand-title">Retain<span class="accent-text">X</span></span>
-          <span class="brand-badge">OLIST E-COMMERCE AI</span>
+          <div class="brand-title-wrap">
+            <span class="brand-title">Retain<span class="accent-text">X</span></span>
+            
+          </div>
+          <span class="brand-badge">E-COMMERCE CHURN PREDICTION</span>
         </div>
       </div>
 
       <!-- Navigation Mode Switcher -->
       <nav class="header-nav" aria-label="Main Navigation">
-        <button type="button" class="view-nav-btn active" id="nav-btn-simulator" data-view="simulator">
+        <button type="button" class="view-nav-btn" id="nav-btn-simulator" data-view="simulator">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
           </svg>
-          <span>Retention Simulator</span>
+          <span>Retention Simulator(Individual)</span>
+        </button>
+        <button type="button" class="view-nav-btn active" id="nav-btn-batch" data-view="batch">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <span>Predict Using CSV</span>
         </button>
         <button type="button" class="view-nav-btn" id="nav-btn-analytics" data-view="analytics">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -54,18 +82,17 @@
             <line x1="12" y1="20" x2="12" y2="4"></line>
             <line x1="6" y1="20" x2="6" y2="14"></line>
           </svg>
-          <span>Model Accuracy & Graphs</span>
-          <span class="nav-pill-badge">College Viva</span>
+          <span>Model Analytics</span>
         </button>
       </nav>
 
       <div class="header-status-group">
         <div class="status-indicator">
           <span class="pulse-dot"></span>
-          <span class="status-label">Advisor available</span>
+          <span class="status-label">AI Engine Ready</span>
         </div>
         <div class="status-divider"></div>
-        <div class="model-badge">Olist model</div>
+        <div class="model-badge">100k Cohort Model</div>
         <div class="status-divider"></div>
         
         <!-- Theme Toggle Button -->
@@ -99,267 +126,636 @@
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
           </svg>
-          CUSTOMER RETENTION · OLIST DATASET
+          ENTERPRISE RETENTION &amp; BEHAVIORAL AI
         </div>
-        <h1>Understand customer retention</h1>
-        <p class="hero-sub">Explore how order, delivery, payment, and review signals relate to repeat purchasing in the Olist marketplace.</p>
+        <h1>Customer Churn Forecasting &amp; Retention Platform</h1>
+        <p class="hero-sub">Predict 90-day inactivity probability, categorize customers into behavioral clusters using unsupervised K-Means, and synthesize automated retention briefings.</p>
+        <span id="industry-hint" class="hidden">Trained on 100,000+ customer records from Olist E-Commerce dataset.</span>
       </div>
 
-      <!-- College Viva / Project Evaluation Shortcut Banner -->
-      <div class="college-project-callout">
-        <div class="callout-pill-icon">🎓</div>
-        <div class="callout-pill-text">
-          <strong>College Project Defense &amp; Viva:</strong> Need to explain model accuracy, ROC curves, confusion matrices, or feature importance to your mentor?
-        </div>
-        <button type="button" class="callout-action-btn" id="hero-models-btn">
-          View Trained Model Graphs &amp; Statistics &rarr;
-        </button>
-      </div>
-
-      <!-- Quick Preset Toolbar -->
-      <div class="preset-toolbar">
-        <span class="preset-label">Try a sample:</span>
-        <button type="button" class="preset-btn danger" id="preset-critical" title="Delayed delivery + 1-star negative review">
-          <span class="preset-dot danger"></span> Late delivery · low rating
-        </button>
-        <button type="button" class="preset-btn warning" id="preset-borderline" title="High freight + 3-star mixed review">
-          <span class="preset-dot warning"></span> High freight cost
-        </button>
-        <button type="button" class="preset-btn success" id="preset-healthy" title="Fast delivery + 5-star loyal review">
-          <span class="preset-dot success"></span> Early delivery · 5 stars
-        </button>
-      </div>
     </section>
 
-    <!-- View 1: Customer Retention Workspace -->
-    <div class="view-panel" id="view-simulator">
+    <!-- Error Banner -->
+    <div class="error-banner hidden" id="error-message" role="alert"></div>
+
+    <!-- =====================================================================
+         VIEW 1: RETENTION SIMULATOR (Individual Customer Deep-Dive)
+         ===================================================================== -->
+    <div class="view-panel hidden" id="view-simulator">
+      <div class="preset-toolbar">
+        <span class="preset-label">Quick Scenarios:</span>
+        <button type="button" class="preset-btn" id="preset-critical" title="Delayed delivery + low rating profile">
+          <span class="preset-dot danger"></span> High Risk: Late Delivery · Low Rating
+        </button>
+        <button type="button" class="preset-btn" id="preset-borderline" title="High freight cost + mixed review">
+          <span class="preset-dot warning"></span> Moderate Risk: High Freight Cost
+        </button>
+        <button type="button" class="preset-btn" id="preset-healthy" title="Fast delivery + 5-star loyal customer">
+          <span class="preset-dot success"></span> Loyal Champion: Fast Delivery · 5★
+        </button>
+      </div>
       <div class="workspace-layout">
 
-      <!-- LEFT COLUMN: Input & Metrics Studio -->
-      <section class="card input-card">
-        <div class="card-header">
-          <div class="header-icon-title">
-            <div class="icon-chip">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="9" cy="21" r="1"></circle>
-                <circle cx="20" cy="21" r="1"></circle>
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-              </svg>
-            </div>
-            <div>
-              <h2>Customer history</h2>
-              <p class="card-subtitle">Enter customer history available as of today</p>
-            </div>
-          </div>
-        </div>
-
-        <input type="hidden" id="industry" value="ecommerce">
-
-        <form id="customer-form" class="telemetry-form">
-          <!-- Customer history inputs for the 90-day churn model -->
-          <div class="industry-fields" data-industry="ecommerce">
-            <div class="grid-2col">
-              <div class="input-group">
-                <label for="days-inactive">Days since last order</label>
-                <div class="input-wrapper"><input type="number" id="days-inactive" name="days_since_last_order" min="0" max="3650" value="30" required><span class="unit-tag">days</span></div>
-                <span class="field-subnote">Churn status begins at 90 days without a purchase.</span>
-              </div>
-              <div class="input-group">
-                <label for="order-count">Orders in customer history</label>
-                <div class="input-wrapper"><input type="number" id="order-count" name="orders_in_history" min="1" max="500" value="1" required><span class="unit-tag">orders</span></div>
-              </div>
-              <div class="input-group">
-                <label for="history-days">Customer history length</label>
-                <div class="input-wrapper"><input type="number" id="history-days" name="days_since_first_order" min="0" max="3650" value="30" required><span class="unit-tag">days</span></div>
-              </div>
-              <div class="input-group">
-                <label for="avg-order-value">Average order value (R$)</label>
-                <div class="input-wrapper"><input type="number" id="avg-order-value" name="average_order_value" min="0" max="100000" value="120" step="any" required><span class="unit-tag">BRL</span></div>
-              </div>
-              <div class="input-group">
-                <label for="avg-review">Average previous review (0 if none)</label>
-                <div class="input-wrapper"><input type="number" id="avg-review" name="average_review_score" min="0" max="5" value="0" step="any" required><span class="unit-tag">/ 5</span></div>
-              </div>
-              <div class="input-group">
-                <label for="avg-delay">Average delivery delay</label>
-                <div class="input-wrapper"><input type="number" id="avg-delay" name="average_delivery_delay_days" min="-365" max="365" value="0" step="any" required><span class="unit-tag">days</span></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Customer Review & Text Feedback -->
-          <div class="sentiment-box">
-            <div class="sentiment-header">
-              <label for="review-text">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        <!-- LEFT COLUMN: Customer Order Inputs -->
+        <section class="card input-card">
+          <div class="card-header">
+            <div class="header-icon-title">
+              <div class="icon-chip">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="9" cy="21" r="1"></circle>
+                  <circle cx="20" cy="21" r="1"></circle>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
-                Customer Review Message <span class="tag-optional">Olist NLP</span>
-              </label>
+              </div>
+              <div>
+                <h2>Customer Telemetry</h2>
+                <p class="card-subtitle">Input order history, financial basket, and fulfillment SLA metrics</p>
+              </div>
             </div>
-            <textarea id="review-text" name="review_text" rows="2" maxlength="2500" placeholder="Enter Portuguese or English review text (e.g. 'O produto atrasou muito e veio quebrado' or 'Adorei, chegou bem antes do prazo!')"></textarea>
           </div>
 
-          <!-- AI Copilot Consent Switch -->
-          <div class="ai-toggle-bar">
-            <div class="ai-toggle-info">
-              <span class="toggle-title">AI service suggestions</span>
-              <span class="toggle-desc">Use the entered order details to draft possible follow-up actions</span>
-            </div>
-            <label class="switch">
-              <input type="checkbox" id="ai-consent" checked>
-              <span class="slider"></span>
-            </label>
-          </div>
+          <input type="hidden" id="industry" value="ecommerce">
 
-          <!-- Submission Action Bar -->
-          <div class="form-footer">
-            <button type="submit" class="cta-button" id="analyze-button">
-              <span class="btn-text">Analyze order</span>
-              <svg class="btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </button>
-            <div id="industry-hint" class="hint-caption">Olist Brazilian marketplace dataset · 2016–2018</div>
-          </div>
-        </form>
+          <form id="customer-form" class="telemetry-form">
+            <div class="industry-fields" data-industry="ecommerce">
+              
+              <!-- Section 1: Customer Activity & Recency -->
+              <div class="form-section-card">
+                <div class="section-card-header">
+                  <span class="section-step-num">01</span>
+                  <div>
+                    <h4>Activity &amp; Recency Telemetry</h4>
+                    <p>Dormancy duration, total transactions, and account age</p>
+                  </div>
+                </div>
+                <div class="form-grid-3">
+                  <div class="form-group">
+                    <label for="ec-recency">
+                      <span>Days since last order</span>
+                      <span class="label-hint">Recency</span>
+                    </label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix-icon">📅</span>
+                      <input type="number" id="ec-recency" name="days_since_last_order" min="0" max="365" step="1" value="20" required>
+                      <span class="input-unit">days</span>
+                    </div>
+                  </div>
 
-        <div class="error-banner hidden" id="error-message" role="alert"></div>
-      </section>
+                  <div class="form-group">
+                    <label for="ec-orders">
+                      <span>Orders in customer history</span>
+                      <span class="label-hint">Frequency</span>
+                    </label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix-icon">📦</span>
+                      <input type="number" id="ec-orders" name="orders_in_history" min="1" max="500" step="1" value="5" required>
+                      <span class="input-unit">orders</span>
+                    </div>
+                  </div>
 
-      <!-- RIGHT COLUMN: Executive Intelligence & AI Retention Copilot -->
-      <section class="card results-card">
-        
-        <!-- Empty State Preview -->
-        <div class="empty-state" id="empty-result">
-          <div class="empty-icon-ring">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-            </svg>
-          </div>
-          <h3>Your analysis will appear here</h3>
-          <p>Select a preloaded customer scenario above or enter order telemetry, then click <strong>Analyze order</strong>.</p>
-        </div>
-
-        <!-- Populated Prediction Results Container -->
-        <div class="prediction-canvas hidden" id="prediction-result">
-          
-          <!-- Top Risk Score Card -->
-          <div class="risk-overview-card" id="risk-overview-box">
-            <div class="risk-top-row">
-              <div class="risk-metric">
-                <span class="metric-caption">90-DAY CHURN MODEL SCORE</span>
-                <div class="metric-value-row">
-                  <span class="score-number" id="risk-number">0.0</span>
-                  <span class="score-percent">%</span>
+                  <div class="form-group">
+                    <label for="ec-tenure">
+                      <span>Customer relationship tenure</span>
+                      <span class="label-hint">Tenure</span>
+                    </label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix-icon">⏳</span>
+                      <input type="number" id="ec-tenure" name="days_since_first_order" min="0" max="1500" step="1" value="180" required>
+                      <span class="input-unit">days</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="badge-wrap">
-                <div class="risk-tag" id="risk-badge">Analyzing</div>
-                <div class="threshold-caption" id="target-definition">Classification model threshold</div>
+
+              <!-- Section 2: Monetary & Basket Economics -->
+              <div class="form-section-card">
+                <div class="section-card-header">
+                  <span class="section-step-num">02</span>
+                  <div>
+                    <h4>Monetary &amp; Basket Economics</h4>
+                    <p>Order spending power, shipping cost, and item count</p>
+                  </div>
+                </div>
+                <div class="form-grid-3">
+                  <div class="form-group">
+                    <label for="ec-order-val">
+                      <span>Average order value (AOV)</span>
+                      <span class="label-hint">Ticket Size</span>
+                    </label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix-icon">₹</span>
+                      <input type="number" id="ec-order-val" name="average_order_value" min="0" max="100000" step="0.01" value="1500.00" required>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="ec-freight">
+                      <span>Delivery / Freight charge</span>
+                      <span class="label-hint">Freight</span>
+                    </label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix-icon">₹</span>
+                      <input type="number" id="ec-freight" name="last_freight_value" min="0" max="10000" step="0.01" value="49.00" required>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="ec-items">
+                      <span>Average items per order</span>
+                      <span class="label-hint">Basket</span>
+                    </label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix-icon">🛒</span>
+                      <input type="number" id="ec-items" name="average_items_per_order" min="1" max="50" step="1" value="3" required>
+                      <span class="input-unit">items</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Section 3: Payment & Satisfaction -->
+              <div class="form-section-card">
+                <div class="section-card-header">
+                  <span class="section-step-num">03</span>
+                  <div>
+                    <h4>Payment Method &amp; Satisfaction</h4>
+                    <p>Payment channel, installments flexibility, and review feedback</p>
+                  </div>
+                </div>
+                <div class="form-grid-3">
+                  <div class="form-group">
+                    <label for="ec-ptype">
+                      <span>Primary payment method</span>
+                      <span class="label-hint">Channel</span>
+                    </label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix-icon">💳</span>
+                      <select id="ec-ptype" name="last_payment_type">
+                        <option value="credit_card" selected>Credit Card (Online)</option>
+                        <option value="upi">UPI / Instant Pay</option>
+                        <option value="debit_card">Debit Card</option>
+                        <option value="cod">Cash on Delivery (COD)</option>
+                        <option value="voucher">Store Voucher / Wallet</option>
+                        <option value="boleto">Bank Slip</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="ec-installments">
+                      <span>Payment installments</span>
+                      <span class="label-hint">Financing</span>
+                    </label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix-icon">🔢</span>
+                      <input type="number" id="ec-installments" name="last_payment_installments" min="1" max="24" step="1" value="1" required>
+                      <span class="input-unit">EMI</span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="ec-rating">
+                      <span>Review rating score</span>
+                      <span class="label-hint">Satisfaction</span>
+                    </label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix-icon">★</span>
+                      <select id="ec-rating" name="average_review_score">
+                        <option value="5" selected>5 Stars - Highly Satisfied</option>
+                        <option value="4">4 Stars - Good Experience</option>
+                        <option value="3">3 Stars - Neutral / Mixed</option>
+                        <option value="2">2 Stars - Dissatisfied</option>
+                        <option value="1">1 Star - Critical Issue</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Section 4: Fulfillment SLA & Review Text -->
+              <div class="form-section-card">
+                <div class="section-card-header">
+                  <span class="section-step-num">04</span>
+                  <div>
+                    <h4>Fulfillment SLA &amp; Feedback</h4>
+                    <p>Carrier delivery compliance and customer review comments</p>
+                  </div>
+                </div>
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label for="ec-delay">
+                      <span>Carrier delivery delay (vs promised date)</span>
+                      <span class="label-hint">Early = Negative</span>
+                    </label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix-icon">🚚</span>
+                      <input type="number" id="ec-delay" name="average_delivery_delay_days" min="-30" max="60" step="0.1" value="0.0" required>
+                      <span class="input-unit">days late</span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="ec-duration">
+                      <span>Total shipment transit duration</span>
+                      <span class="label-hint">Total Transit</span>
+                    </label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix-icon">⏱️</span>
+                      <input type="number" id="ec-duration" name="average_delivery_duration_days" min="0" max="90" step="0.1" value="5.0" required>
+                      <span class="input-unit">days transit</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group feedback-group">
+                  <label for="review-text">
+                    <span>Customer review feedback comment (optional)</span>
+                    <span class="label-hint">NLP Sentiment Analysis</span>
+                  </label>
+                  <div class="textarea-wrapper">
+                    <textarea id="review-text" name="review_text" rows="3" placeholder="e.g. Products arrived quickly and fresh, packaging was great. Or: Shipment delayed by 5 days, customer service did not respond..."></textarea>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- AI Copilot Consent Box -->
+            <div class="ai-toggle-box">
+              <label class="toggle-switch">
+                <input type="checkbox" id="ai-consent" checked>
+                <span class="toggle-slider"></span>
+              </label>
+              <div class="toggle-label-group">
+                <span class="toggle-title">Synthesize AI Retention Briefing (Gemini Copilot)</span>
+                <span class="toggle-desc">Automatically pairs customer telemetry with grounded RAG service recovery protocols.</span>
               </div>
             </div>
 
-            <!-- Dynamic Gauge / Progress Track -->
-            <div class="progress-meter">
-              <div class="progress-fill" id="risk-track"></div>
-            </div>
-            <div class="risk-caveat-text">Churn is operationally defined as no repeat purchase within 90 days; the score is an estimate, not certainty.</div>
-
-            <!-- Sentiment Chip if available -->
-            <div class="sentiment-pill-box hidden" id="review-signal"></div>
-          </div>
-
-          <!-- Feature Attribution Breakdown -->
-          <div class="attribution-card">
-            <div class="attribution-header">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="20" x2="18" y2="10"></line>
-                <line x1="12" y1="20" x2="12" y2="4"></line>
-                <line x1="6" y1="20" x2="6" y2="14"></line>
+            <!-- Primary Submit CTA -->
+            <button type="submit" class="submit-btn" id="analyze-button">
+              <span class="btn-text">Execute Churn Risk Analysis</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="9 18 15 12 9 6"></polyline>
               </svg>
-              <span>Why the model estimates this risk (feature contributions)</span>
-            </div>
-            <ul class="evidence-grid" id="evidence-list"></ul>
-          </div>
-
-          <!-- Model Telemetry Quality -->
-          <div class="model-meta-box" id="model-quality"></div>
-          <div class="model-quality-actions">
-            <button type="button" class="view-graphs-inline-btn" id="inline-model-graphs-btn">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="20" x2="18" y2="10"></line>
-                <line x1="12" y1="20" x2="12" y2="4"></line>
-                <line x1="6" y1="20" x2="6" y2="14"></line>
-              </svg>
-              <span>View Trained Model Graphs &amp; Statistics Studio &rarr;</span>
             </button>
+          </form>
+        </section>
+
+        <!-- RIGHT COLUMN: Predictions & AI Playbook -->
+        <section class="card output-card">
+          
+          <!-- Empty State Container -->
+          <div class="empty-state" id="empty-result">
+            <div class="empty-icon-pulse">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+            <h3>Customer Intelligence Ready</h3>
+            <p>Select a quick scenario above or customize telemetry parameters on the left, then click <strong>Execute Churn Risk Analysis</strong>.</p>
+            <div class="empty-hint-pills">
+              <span class="hint-pill">⚡ Real-Time Churn Scoring</span>
+              <span class="hint-pill">🔮 K-Means Segmentation</span>
+              <span class="hint-pill">🤖 Gemini Retention Briefing</span>
+            </div>
           </div>
 
-          <!-- AI Retention Playbook Card (Powered by Gemini + RAG) -->
-          <div class="ai-playbook-card" id="recommendation-card">
-            <div class="playbook-header">
-              <div class="playbook-title-group">
-                <div class="sparkle-icon">
+          <!-- Populated Prediction Results Container -->
+          <div class="prediction-canvas hidden" id="prediction-result">
+            
+            <!-- Top Risk Scorecard -->
+            <div class="risk-overview-card" id="risk-overview-box">
+              <div class="risk-card-top">
+                <div>
+                  <span class="risk-eyebrow">90-DAY RETENTION ASSESSMENT</span>
+                  <div class="risk-main-row">
+                    <span class="score-number" id="risk-number">0.0</span>
+                    <span class="score-percent">%</span>
+                    <span class="score-suffix">Churn Probability</span>
+                  </div>
+                </div>
+                <div class="risk-badges-column">
+                  <div class="risk-tag" id="risk-badge">Evaluating</div>
+                  <div class="segment-tag hidden" id="segment-badge" title="Unsupervised K-Means Behavioral Cluster">Segment</div>
+                </div>
+              </div>
+
+              <!-- Meter Track -->
+              <div class="progress-meter">
+                <div class="progress-fill" id="risk-track"></div>
+              </div>
+
+              <div class="risk-footer-row">
+                <span class="threshold-caption" id="target-definition">Decision Threshold: 50.0% · Inactivity Target: 90 Days</span>
+                <div class="sentiment-pill-box hidden" id="review-signal"></div>
+              </div>
+            </div>
+
+            <!-- Feature Attribution Breakdown -->
+            <div class="attribution-card">
+              <div class="card-mini-header">
+                <div class="mini-title-wrap">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                  <h4>Feature Attribution &amp; Risk Drivers</h4>
+                </div>
+                <span class="attribution-badge">Model Coefficients</span>
+              </div>
+              <ul class="evidence-grid" id="evidence-list"></ul>
+              <div class="model-quality-caption" id="model-quality"></div>
+            </div>
+
+            <!-- AI Retention Playbook Card -->
+            <div class="ai-playbook-card" id="recommendation-card">
+              <div class="playbook-header">
+                <div class="playbook-sparkle">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
                   </svg>
                 </div>
                 <div>
-                  <h3 id="recommendation-provider">Suggested follow-up</h3>
-                  <span class="playbook-subtitle">What the data says, why it matters, and what to do next</span>
+                  <h4 id="recommendation-provider">AI Retention Playbook &amp; Action Plan</h4>
+                  <span class="playbook-subtitle">Grounded recovery protocols &amp; commercial margin guidelines</span>
                 </div>
               </div>
+              <div class="playbook-body" id="recommendation-text">
+                Synthesizing customer retention briefing...
+              </div>
             </div>
-            <div class="playbook-body" id="recommendation-text">
-              Generating retention strategy briefing...
+
+            <!-- Copilot Chat -->
+            <div class="copilot-panel">
+              <div class="copilot-header">
+                <div class="copilot-title">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                  </svg>
+                  <h4>Retention Copilot</h4>
+                </div>
+                <span class="copilot-status">Gemini Active</span>
+              </div>
+
+              <div class="prompt-chips">
+                <button type="button" class="chip-btn" data-prompt="Draft a personalized service recovery email offering compensation for the delivery delay">
+                  ✉️ Draft Apology Email
+                </button>
+                <button type="button" class="chip-btn" data-prompt="What discount or free delivery voucher economics should we offer to secure their next order?">
+                  🏷️ Voucher Economics
+                </button>
+                <button type="button" class="chip-btn" data-prompt="How does this customer's K-Means cluster influence our retention strategy?">
+                  🔮 Segment Strategy
+                </button>
+              </div>
+
+              <div class="chat-thread" id="chat-messages">
+                <div class="chat-empty">
+                  Ask any question regarding this customer's churn risk, delivery delays, voucher margins, or intervention strategy.
+                </div>
+              </div>
+
+              <form id="chat-form" class="copilot-form">
+                <input type="text" id="chat-input" placeholder="Ask Copilot a question..." autocomplete="off" disabled>
+                <button type="submit" id="chat-submit" class="chat-send-btn" disabled title="Send message">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </button>
+              </form>
             </div>
+
           </div>
-
-          <!-- Interactive AI Copilot Chat -->
-          <div class="copilot-panel">
-            <div class="copilot-header">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-              </svg>
-              <span>Ask a follow-up question</span>
-            </div>
-
-            <!-- Quick Action Prompts -->
-            <div class="prompt-chips">
-              <button type="button" class="chip-btn" data-prompt="Draft a personalized service apology email in English offering compensation for the delivery delay">
-                ✉️ Apology & Compensation Email
-              </button>
-              <button type="button" class="chip-btn" data-prompt="What discount or free shipping voucher should we offer to secure their second order?">
-                🏷️ Voucher & Discount Strategy
-              </button>
-              <button type="button" class="chip-btn" data-prompt="Translate and summarize this customer's Portuguese review complaint for our customer success team">
-                🇧🇷 Translate Review & Root Cause
-              </button>
-            </div>
-
-            <div class="chat-thread" id="chat-messages">
-              <div class="chat-empty">Ask any follow-up question regarding this customer's churn signals, delivery delays, or intervention strategy.</div>
-            </div>
-
-            <form id="chat-form" class="copilot-form">
-              <input id="chat-input" type="text" maxlength="1200" placeholder="Ask AI Copilot (e.g. 'How should we address their 1-star delivery complaint?')" autocomplete="off" disabled>
-              <button type="submit" id="chat-submit" class="chat-send-btn" disabled aria-label="Send query">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <line x1="22" y1="2" x2="11" y2="13"></line>
-                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                </svg>
-              </button>
-            </form>
-          </div>
-
-        </div>
-      </section>
+        </section>
       </div>
     </div><!-- End View 1: #view-simulator -->
 
-    <!-- View 2: Trained Models Evaluation & Mentor Defense Studio -->
+    <!-- =====================================================================
+         VIEW 2: ENTERPRISE BATCH COHORT PREDICTION & SEGMENTATION
+         ===================================================================== -->
+    <div class="view-panel" id="view-batch">
+      <div class="batch-canvas">
+
+        <!-- Batch Hero Bar -->
+        <div class="batch-hero-bar">
+          <div class="batch-title-group">
+            <span class="batch-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+              COHORT INTELLIGENCE
+            </span>
+            <h2>Batch Predict &amp; Customer Segmentation</h2>
+            <p>Upload customer transaction records to calculate retention probability at scale and categorize customers across behavioral segments.</p>
+          </div>
+          <!-- <div class="batch-actions-group">
+            <a href="/api/sample-dataset" class="sample-download-btn" id="batch-sample-download-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Download Sample Dataset (.CSV)</span>
+            </a>
+          </div> -->
+        </div>
+
+        <!-- Upload & Configuration Card -->
+        <div class="card batch-upload-card">
+          <div class="upload-dropzone" id="batch-dropzone">
+            <input type="file" id="batch-file-input" accept=".csv" class="hidden-file-input">
+            <div class="dropzone-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <div class="dropzone-text">
+              <h3>Drag &amp; Drop Customer Dataset (.CSV)</h3>
+              <p>or <button type="button" class="dropzone-browse-btn" id="batch-browse-btn">browse files</button> from your device</p>
+              <div class="dropzone-hint">Supports retail customer exports, synthetic cohorts, or custom e-commerce CSVs up to 100,000+ rows.</div>
+            </div>
+          </div>
+
+          <!-- Selected File Indicator Bar -->
+          <div class="selected-file-bar hidden" id="selected-file-bar">
+            <div class="file-info-group">
+              <span class="file-icon">📄</span>
+              <div class="file-details">
+                <span class="file-name" id="selected-file-name">filename.csv</span>
+                <span class="file-size" id="selected-file-size">0 KB</span>
+              </div>
+            </div>
+            <div class="file-action-group">
+              <button type="button" class="btn-remove-file" id="batch-remove-file-btn" title="Remove file">&times;</button>
+              <button type="button" class="btn-execute-batch" id="batch-execute-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                <span>Run Batch Analysis</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading Spinner -->
+          <div class="batch-loading-overlay hidden" id="batch-loading">
+            <div class="batch-spinner"></div>
+            <div class="batch-loading-text">Scoring cohort across Churn Classifier &amp; K-Means Clustering...</div>
+          </div>
+        </div>
+
+        <!-- Results Dashboard Container (Hidden until batch runs) -->
+        <div class="batch-results-container hidden" id="batch-results">
+          
+          <!-- Summary Metric Cards -->
+          <div class="kpi-banner-grid batch-kpis">
+            <div class="kpi-glass-card">
+              <div class="kpi-label">Total Cohort Analyzed</div>
+              <div class="kpi-value-row">
+                <span class="kpi-val" id="batch-kpi-total">0</span>
+                <span class="kpi-unit">Customers</span>
+              </div>
+              <div class="kpi-subtext">Active Customer Base</div>
+            </div>
+
+            <div class="kpi-glass-card success-card">
+              <div class="kpi-label">Predicted to Retain</div>
+              <div class="kpi-value-row">
+                <span class="kpi-val text-success" id="batch-kpi-retain">0</span>
+                <span class="kpi-unit" id="batch-kpi-retain-pct">(0.0%)</span>
+              </div>
+              <div class="kpi-subtext">Active repeat intent (&lt;50% churn risk)</div>
+            </div>
+
+            <div class="kpi-glass-card danger-card">
+              <div class="kpi-label">Predicted to Churn</div>
+              <div class="kpi-value-row">
+                <span class="kpi-val text-danger" id="batch-kpi-churn">0</span>
+                <span class="kpi-unit" id="batch-kpi-churn-pct">(0.0%)</span>
+              </div>
+              <div class="kpi-subtext">Exceeding 90-day inactivity threshold</div>
+            </div>
+
+            <div class="kpi-glass-card">
+              <div class="kpi-label">Avg Portfolio Risk</div>
+              <div class="kpi-value-row">
+                <span class="kpi-val" id="batch-kpi-avg-risk">0.0</span>
+                <span class="kpi-unit">% Risk</span>
+              </div>
+              <div class="kpi-subtext">Decision Threshold: 50.0%</div>
+            </div>
+          </div>
+
+          <!-- Risk Distribution Progress Section -->
+          <div class="card batch-distribution-card">
+            <div class="card-header">
+              <h3>Portfolio Risk Tier Distribution</h3>
+              <p class="card-subtitle">Distribution of customer population across calibrated risk tiers</p>
+            </div>
+            <div class="risk-bands-grid">
+              <div class="risk-band-box low">
+                <div class="band-header">
+                  <span class="band-tag low">Low Risk (&lt;30%)</span>
+                  <span class="band-count" id="band-low-count">0</span>
+                </div>
+                <div class="band-bar"><div class="band-fill low" id="band-low-fill" style="width: 0%"></div></div>
+                <div class="band-pct" id="band-low-pct">0%</div>
+              </div>
+              <div class="risk-band-box mod">
+                <div class="band-header">
+                  <span class="band-tag mod">Moderate (30-60%)</span>
+                  <span class="band-count" id="band-mod-count">0</span>
+                </div>
+                <div class="band-bar"><div class="band-fill mod" id="band-mod-fill" style="width: 0%"></div></div>
+                <div class="band-pct" id="band-mod-pct">0%</div>
+              </div>
+              <div class="risk-band-box high">
+                <div class="band-header">
+                  <span class="band-tag high">Elevated (60-80%)</span>
+                  <span class="band-count" id="band-high-count">0</span>
+                </div>
+                <div class="band-bar"><div class="band-fill high" id="band-high-fill" style="width: 0%"></div></div>
+                <div class="band-pct" id="band-high-pct">0%</div>
+              </div>
+              <div class="risk-band-box crit">
+                <div class="band-header">
+                  <span class="band-tag crit">Critical (&ge;80%)</span>
+                  <span class="band-count" id="band-crit-count">0</span>
+                </div>
+                <div class="band-bar"><div class="band-fill crit" id="band-crit-fill" style="width: 0%"></div></div>
+                <div class="band-pct" id="band-crit-pct">0%</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Unsupervised K-Means Behavioral Segments Grid -->
+          <div class="batch-segments-section">
+            <div class="section-title-bar">
+              <div>
+                <h3>Unsupervised K-Means Customer Segments</h3>
+                <p>Behavioral clusters identified across RFM telemetry, satisfaction, and logistics delay</p>
+              </div>
+            </div>
+            <div class="segments-grid" id="batch-segments-grid">
+              <!-- Dynamically populated via JS -->
+            </div>
+          </div>
+
+          <!-- Top At-Risk Customers Table -->
+          <div class="card batch-table-card">
+            <div class="table-header-row">
+              <div>
+                <h3>Priority Retention Targets</h3>
+                <p class="card-subtitle">Highest churn probability customers ranked for targeted engagement</p>
+              </div>
+              <div class="table-actions">
+                <button type="button" class="btn-export-csv" id="batch-export-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  <span>Export Scored Results (.CSV)</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="batch-data-table">
+                <thead>
+                  <tr>
+                    <th>Customer ID</th>
+                    <th>State</th>
+                    <th>Churn Risk</th>
+                    <th>Status</th>
+                    <th>K-Means Segment</th>
+                    <th>Recency</th>
+                    <th>Lifetime Spend</th>
+                    <th>Rating</th>
+                    <th>Delivery Delay</th>
+                    <th>Recommended Action</th>
+                  </tr>
+                </thead>
+                <tbody id="batch-table-body">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div><!-- End #batch-results -->
+
+      </div>
+    </div><!-- End View 2: #view-batch -->
+
+    <!-- =====================================================================
+         VIEW 3: MODEL PERFORMANCE & ARCHITECTURE
+         ===================================================================== -->
     <div class="view-panel hidden" id="view-analytics">
       <div class="analytics-canvas">
         
@@ -371,36 +767,38 @@
                 <circle cx="12" cy="12" r="10"></circle>
                 <path d="M12 6v6l4 2"></path>
               </svg>
-              ACADEMIC PROJECT DEFENSE · EVALUATION SUITE
+              MODEL ARCHITECTURE &amp; PERFORMANCE
             </span>
-            <h2>Trained Model Performance, Accuracy &amp; Visualizations</h2>
-            <p>Comprehensive validation telemetry, ROC curves, confusion matrices, and directional feature weights trained on 100,000 Olist e-commerce orders and 37,123 Portuguese reviews with customer-grouped holdouts.</p>
+            <h2>Machine Learning Evaluation Suite</h2>
+            <p>Benchmark accuracy, confusion matrices, standardized feature weights, and clustering diagnostics.</p>
           </div>
           <div class="analytics-actions">
-            <button type="button" class="secondary-btn" id="analytics-back-btn">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-              </svg>
-              <span>Back to Simulator</span>
+            <button type="button" class="analytics-back-btn" id="analytics-back-btn">
+              &larr; Back to Simulator
             </button>
-            <a href="{{ url_for('static', filename='images/model_graphs/roc_curves.png') }}" target="_blank" class="secondary-btn" title="Open ROC Curve Plot">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-              <span>Download Plots</span>
-            </a>
           </div>
         </div>
 
         <!-- 4-Card KPI Executive Scorecard Grid -->
         <div class="analytics-kpi-grid">
-          <!-- KPI 1: NLP Model -->
+          <!-- KPI 1: Churn Model -->
           <div class="kpi-card">
             <div class="kpi-top">
-              <span class="kpi-label">NLP Sentiment Classifier</span>
+              <span class="kpi-label">90-Day Churn Classifier</span>
+              <span class="kpi-chip blue">0.721 AUC</span>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-number">0.721</span>
+              <span class="kpi-unit">ROC-AUC</span>
+            </div>
+            <div class="kpi-subtext">F1-Score: 0.626 · Precision: 64.4%</div>
+            <div class="kpi-caption">Trained on 100,000 customer cohort (20,000 held-out test split).</div>
+          </div>
+
+          <!-- KPI 2: NLP Model -->
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-label">Review Sentiment Classifier</span>
               <span class="kpi-chip emerald">0.974 AUC</span>
             </div>
             <div class="kpi-value-row">
@@ -408,71 +806,57 @@
               <span class="kpi-unit">% ROC-AUC</span>
             </div>
             <div class="kpi-subtext">Accuracy: 93.2% · F1-Score: 0.952</div>
-            <div class="kpi-caption">37,123 Portuguese reviews (7,417 test set); Precision: 95.1%, Recall: 95.2%.</div>
-          </div>
-
-          <!-- KPI 2: Churn Model -->
-          <div class="kpi-card">
-            <div class="kpi-top">
-              <span class="kpi-label">90-Day Churn Risk Model</span>
-              <span class="kpi-chip blue">0.738 AUC</span>
-            </div>
-            <div class="kpi-value-row">
-              <span class="kpi-number">0.738</span>
-              <span class="kpi-unit">ROC-AUC</span>
-            </div>
-            <div class="kpi-subtext">F1-Score: 0.776 · Inactivity Recall: 63.5%</div>
-            <div class="kpi-caption">56,334 train / 14,084 test customers (Customer-grouped holdout; no leakage).</div>
+            <div class="kpi-caption">37,123 customer reviews; Precision: 95.1%, Recall: 95.2%.</div>
           </div>
 
           <!-- KPI 3: Repeat Specificity -->
           <div class="kpi-card">
             <div class="kpi-top">
-              <span class="kpi-label">Repeat Buyer Specificity</span>
-              <span class="kpi-chip emerald">71.4% Rate</span>
+              <span class="kpi-label">Retention Specificity</span>
+              <span class="kpi-chip emerald">78.3% Rate</span>
             </div>
             <div class="kpi-value-row">
-              <span class="kpi-number">71.4</span>
-              <span class="kpi-unit">% Detected</span>
+              <span class="kpi-number">78.3</span>
+              <span class="kpi-unit">% Specificity</span>
             </div>
-            <div class="kpi-subtext">142 of 199 Repeat Buyers Flagged</div>
-            <div class="kpi-caption">Balanced weights allow model to accurately isolate rare repeat buyers amidst heavy imbalance.</div>
+            <div class="kpi-subtext">9,502 of 12,143 Retained Buyers Isolated</div>
+            <div class="kpi-caption">Accurately identifies loyal customers to prevent wasteful incentive discounts.</div>
           </div>
 
-          <!-- KPI 4: Imbalance Disclosure -->
+          <!-- KPI 4: K-Means Segmentation -->
           <div class="kpi-card">
             <div class="kpi-top">
-              <span class="kpi-label">Class Imbalance Baseline</span>
-              <span class="kpi-chip amber">Honest Baseline</span>
+              <span class="kpi-label">K-Means Customer Segments</span>
+              <span class="kpi-chip purple">k = 4 Clusters</span>
             </div>
             <div class="kpi-value-row">
-              <span class="kpi-number">0.997</span>
-              <span class="kpi-unit">Majority F1</span>
+              <span class="kpi-number">0.233</span>
+              <span class="kpi-unit">Silhouette</span>
             </div>
-            <div class="kpi-subtext">99.48% Natural Inactivity Rate</div>
-            <div class="kpi-caption">Transparent college disclosure: 97% of Olist customers order once, requiring operational rules.</div>
+            <div class="kpi-subtext">Unsupervised Behavioral Clustering</div>
+            <div class="kpi-caption">Partitions shoppers into Champions, Active Regulars, At-Risk, and Delayed cohorts.</div>
           </div>
         </div>
 
         <!-- Studio Navigation Bar -->
         <div class="studio-tabs-bar" role="tablist">
           <button type="button" class="studio-tab-btn active" data-tab="roc" role="tab" aria-selected="true">
-            📈 ROC Curves &amp; AUC
+            📈 ROC Curves
           </button>
           <button type="button" class="studio-tab-btn" data-tab="cm" role="tab" aria-selected="false">
             🔲 Confusion Matrices
           </button>
           <button type="button" class="studio-tab-btn" data-tab="features" role="tab" aria-selected="false">
-            ⚖️ Feature Importance &amp; Weights
+            ⚖️ Feature Weights
+          </button>
+          <button type="button" class="studio-tab-btn" data-tab="segmentation" role="tab" aria-selected="false">
+            🔮 Unsupervised K-Means Clusters
           </button>
           <button type="button" class="studio-tab-btn" data-tab="nlp" role="tab" aria-selected="false">
-            🇧🇷 NLP Sentiment Lexicon
+            💬 Sentiment Lexicon
           </button>
           <button type="button" class="studio-tab-btn" data-tab="benchmark" role="tab" aria-selected="false">
-            📊 Benchmark Comparison
-          </button>
-          <button type="button" class="studio-tab-btn" data-tab="viva" role="tab" aria-selected="false">
-            🎓 Mentor Viva &amp; Defense Guide
+            📊 Benchmark Summary
           </button>
         </div>
 
@@ -484,37 +868,11 @@
                 <h3>Receiver Operating Characteristic (ROC) Curves</h3>
                 <p>Discriminative capacity across decision thresholds comparing both classifiers against random baseline.</p>
               </div>
-              <span class="kpi-chip blue">Click image to enlarge</span>
+              <span class="kpi-chip blue">ROC Analysis</span>
             </div>
             <div class="graph-image-wrapper" title="Click to view full-resolution plot">
-              <img src="{{ url_for('static', filename='images/model_graphs/roc_curves.png') }}" alt="ROC Curves Comparison for Churn Model and NLP Sentiment Model" class="zoomable-graph" data-title="Receiver Operating Characteristic (ROC) Curves">
+              <img src="{{ url_for('static', filename='images/model_graphs/roc_curves.png') }}" alt="ROC Curves Plot" class="zoomable-graph" data-title="ROC Curves Comparison">
               <div class="zoom-hint">🔍 Click to zoom</div>
-            </div>
-            <div class="deep-dive-grid">
-              <div class="deep-dive-box">
-                <h4>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-                  90-Day Churn Risk Model (AUC = 0.738)
-                </h4>
-                <p>Evaluated on a strictly held-out partition of <strong>14,084 test customers (38,546 customer snapshots)</strong>. The model demonstrates meaningful discrimination between active buyers who reorder and those who cross 90 days without purchasing.</p>
-                <ul>
-                  <li><strong>Validation Strategy:</strong> Customer-Grouped Holdout (ensures snapshots from the same customer never cross partitions, preventing target leakage).</li>
-                  <li><strong>Random Guess Baseline:</strong> AUC = 0.500 (diagonal dashed line). Our model delivers <strong>+0.238 lift</strong> above random baseline.</li>
-                  <li><strong>Class Weighting:</strong> Trained with <code>class_weight='balanced'</code> to counterbalance extreme non-contractual single-order skew.</li>
-                </ul>
-              </div>
-              <div class="deep-dive-box">
-                <h4>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                  NLP Portuguese Review Model (AUC = 0.974)
-                </h4>
-                <p>Trained and validated on <strong>37,123 real Brazilian Portuguese customer reviews</strong>. Reaches exceptional discriminative performance due to clear lexical signals between praise and complaints.</p>
-                <ul>
-                  <li><strong>Feature Space:</strong> 5,000 TF-IDF unigram &amp; bigram tokens (e.g. <em>"rapida"</em>, <em>"nao recomendo"</em>).</li>
-                  <li><strong>Holdout Set:</strong> 20% order-grouped holdout (7,417 test reviews).</li>
-                  <li><strong>F1-Score:</strong> 0.952 with 95.1% Precision and 95.2% Recall.</li>
-                </ul>
-              </div>
             </div>
           </div>
         </div>
@@ -524,179 +882,101 @@
           <div class="graph-preview-card">
             <div class="graph-header">
               <div>
-                <h3>Confusion Matrix Heatmaps &amp; Error Breakdown</h3>
-                <p>Ground truth vs predicted class assignments on strictly held-out test splits.</p>
+                <h3>Confusion Matrices (Test Cohort Evaluation)</h3>
+                <p>True Positive, True Negative, False Positive, and False Negative classifications on held-out split.</p>
               </div>
-              <span class="kpi-chip blue">Click image to enlarge</span>
+              <span class="kpi-chip emerald">Error Diagnostics</span>
             </div>
             <div class="graph-image-wrapper" title="Click to view full-resolution plot">
-              <img src="{{ url_for('static', filename='images/model_graphs/confusion_matrices.png') }}" alt="Confusion Matrices for Churn and NLP Sentiment Models" class="zoomable-graph" data-title="Confusion Matrix Heatmaps &amp; Classification Breakdown">
+              <img src="{{ url_for('static', filename='images/model_graphs/confusion_matrices.png') }}" alt="Confusion Matrices Plot" class="zoomable-graph" data-title="Holdout Confusion Matrices">
               <div class="zoom-hint">🔍 Click to zoom</div>
-            </div>
-            <div class="deep-dive-grid">
-              <div class="deep-dive-box">
-                <h4>90-Day Churn Model Error Breakdown</h4>
-                <div class="cm-table-wrap">
-                  <table class="cm-table">
-                    <thead>
-                      <tr>
-                        <th>N = 38,546 Snapshots</th>
-                        <th>Pred: Repeat (0)</th>
-                        <th>Pred: Churn (1)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <th>Actual: Repeat (0) [199]</th>
-                        <td class="cell-tn"><strong>142 (TN)</strong><br><small>71.4% Specificity</small></td>
-                        <td class="cell-err"><strong>57 (FP)</strong><br><small>False Churn Alarm</small></td>
-                      </tr>
-                      <tr>
-                        <th>Actual: Churn (1) [38,347]</th>
-                        <td class="cell-err"><strong>13,990 (FN)</strong><br><small>Missed Inactive</small></td>
-                        <td class="cell-tp"><strong>24,357 (TP)</strong><br><small>63.5% Churn Recall</small></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <p><strong>Mentor Defense Insight:</strong> Notice how the balanced model correctly identifies <strong>142 out of 199 rare repeat buyers (71.4% specificity)</strong>. In e-commerce retention, accurately finding the rare repeat buyer is critical because saving an active customer drives high lifetime value.</p>
-              </div>
-
-              <div class="deep-dive-box">
-                <h4>NLP Sentiment Classifier Error Breakdown</h4>
-                <div class="cm-table-wrap">
-                  <table class="cm-table">
-                    <thead>
-                      <tr>
-                        <th>N = 7,417 Reviews</th>
-                        <th>Pred: Negative (0)</th>
-                        <th>Pred: Positive (1)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <th>Actual: Negative (0) [2,207]</th>
-                        <td class="cell-tn"><strong>1,953 (TN)</strong><br><small>88.5% Neg Specificity</small></td>
-                        <td class="cell-err"><strong>254 (FP)</strong><br><small>Type I Error</small></td>
-                      </tr>
-                      <tr>
-                        <th>Actual: Positive (1) [5,210]</th>
-                        <td class="cell-err"><strong>248 (FN)</strong><br><small>Type II Error</small></td>
-                        <td class="cell-tp"><strong>4,962 (TP)</strong><br><small>95.2% Pos Recall</small></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <p><strong>Accuracy Calculation:</strong> Total Correct = $(1,953 + 4,962) = 6,915$ out of $7,417$ test reviews &rarr; <strong>93.2% Overall Test Accuracy</strong> with balanced error rates ($254$ FP vs $248$ FN).</p>
-              </div>
             </div>
           </div>
         </div>
 
-        <!-- Studio Tab 3: Feature Importance -->
+        <!-- Studio Tab 3: Feature Weights -->
         <div class="studio-panel hidden" id="tab-panel-features">
           <div class="graph-preview-card">
             <div class="graph-header">
               <div>
-                <h3>Logistic Regression Feature Weights &amp; Directional Impact</h3>
-                <p>Standardized coefficients (log-odds &beta; values) explaining feature leverage on customer churn.</p>
+                <h3>Standardized Feature Importance (Coefficients)</h3>
+                <p>Magnitude and direction of behavioral telemetry predictors influencing 90-day churn likelihood.</p>
               </div>
-              <span class="kpi-chip blue">Click image to enlarge</span>
+              <span class="kpi-chip blue">Standardized Betas</span>
             </div>
             <div class="graph-image-wrapper" title="Click to view full-resolution plot">
               <img src="{{ url_for('static', filename='images/model_graphs/feature_importance.png') }}" alt="Feature Importance Plot for Churn Model" class="zoomable-graph" data-title="Logistic Regression Feature Importance Weights">
               <div class="zoom-hint">🔍 Click to zoom</div>
             </div>
+          </div>
+        </div>
 
-            <div class="deep-dive-box" style="margin-top:18px;">
-              <h4>Mathematical Attribution Formula (Per-Customer Explanation)</h4>
-              <p>Because all features are normalized with <code>StandardScaler</code> prior to logistic regression, each coefficient &beta;<sub>i</sub> directly reflects relative statistical leverage on the log-odds of churning:</p>
-              <div style="background:var(--bg-card); padding:12px 16px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:11.5px; margin-bottom:12px; color:var(--text-main);">
-                Log-Odds(Churn) = &beta;<sub>0</sub> + &sum; &beta;<sub>i</sub> &times; [ (x<sub>i</sub> - &mu;<sub>i</sub>) / &sigma;<sub>i</sub> ]
+        <!-- Studio Tab 4: Unsupervised K-Means Segmentation -->
+        <div class="studio-panel hidden" id="tab-panel-segmentation">
+          <div class="graph-preview-card">
+            <div class="graph-header">
+              <div>
+                <h3>Unsupervised Customer Segmentation (K-Means Clustering, k=4)</h3>
+                <p>Behavioral clustering groups customers by recency, order volume, lifetime spend, rating, and transit delays.</p>
               </div>
-              <p>A positive coefficient (red) pushes the customer towards churn, while a negative coefficient (green) acts as an anchor preserving customer retention.</p>
+              <span class="kpi-chip purple">Silhouette Score = 0.233</span>
             </div>
+            
+            <!-- 3 Cluster Graphs Grid -->
+            <div class="segmentation-graphs-grid">
+              <div class="sub-graph-box">
+                <div class="sub-graph-title">1. Elbow Method WCSS Analysis</div>
+                <div class="graph-image-wrapper">
+                  <img src="{{ url_for('static', filename='images/model_graphs/elbow_curve.png') }}" alt="Elbow Method Curve" class="zoomable-graph" data-title="K-Means Elbow Method">
+                  <div class="zoom-hint">🔍 Click to zoom</div>
+                </div>
+                <p class="sub-graph-desc">Optimal inflection occurs at <strong>k=4</strong>, where WCSS (Inertia) drops before reaching diminishing returns.</p>
+              </div>
 
-            <div class="weights-container">
-              <div class="weight-card">
-                <span class="weight-name">Days Since Last Order (Recency)</span>
-                <span class="weight-badge churn">+0.7777 (Major Churn Driver)</span>
+              <div class="sub-graph-box">
+                <div class="sub-graph-title">2. 2D PCA Cluster Map</div>
+                <div class="graph-image-wrapper">
+                  <img src="{{ url_for('static', filename='images/model_graphs/cluster_scatter.png') }}" alt="PCA 2D Cluster Map" class="zoomable-graph" data-title="2D PCA Customer Projection">
+                  <div class="zoom-hint">🔍 Click to zoom</div>
+                </div>
+                <p class="sub-graph-desc">2-dimensional Principal Component Projection visualizing distinct behavioral separation across customer clusters.</p>
               </div>
-              <div class="weight-card">
-                <span class="weight-name">Orders in History (Frequency)</span>
-                <span class="weight-badge retain">-0.2343 (Retention Anchor)</span>
-              </div>
-              <div class="weight-card">
-                <span class="weight-name">Total Historical Spend (Monetary)</span>
-                <span class="weight-badge retain">-0.2028 (High LTV Buffer)</span>
-              </div>
-              <div class="weight-card">
-                <span class="weight-name">Average Delivery Duration (Days)</span>
-                <span class="weight-badge churn">+0.1673 (Logistics Friction)</span>
-              </div>
-              <div class="weight-card">
-                <span class="weight-name">Average Review Rating (Stars)</span>
-                <span class="weight-badge retain">-0.1206 (Satisfaction Anchor)</span>
-              </div>
-              <div class="weight-card">
-                <span class="weight-name">Average Items per Basket</span>
-                <span class="weight-badge retain">-0.1198 (Basket Depth Anchor)</span>
-              </div>
-              <div class="weight-card">
-                <span class="weight-name">Payment Installments Count</span>
-                <span class="weight-badge retain">-0.1024 (Credit Engagement)</span>
-              </div>
-              <div class="weight-card">
-                <span class="weight-name">Last Order Value</span>
-                <span class="weight-badge churn">+0.2500 (One-Off Ticket Risk)</span>
+
+              <div class="sub-graph-box">
+                <div class="sub-graph-title">3. Cluster Centroid Profiles</div>
+                <div class="graph-image-wrapper">
+                  <img src="{{ url_for('static', filename='images/model_graphs/cluster_profiles.png') }}" alt="Cluster Centroid Profiles" class="zoomable-graph" data-title="Cluster Centroid Multi-Dimensional Radar">
+                  <div class="zoom-hint">🔍 Click to zoom</div>
+                </div>
+                <p class="sub-graph-desc">Comparative radar highlighting Recency (days), Lifetime Spend (₹), Review Score, and Logistics Delay across clusters.</p>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Studio Tab 4: NLP Lexicon -->
+        <!-- Studio Tab 5: NLP Lexicon -->
         <div class="studio-panel hidden" id="tab-panel-nlp">
           <div class="graph-preview-card">
             <div class="graph-header">
               <div>
-                <h3>Portuguese Customer Feedback NLP Lexicon</h3>
-                <p>Top unigram and bigram tokens driving 4-5 star positive praise vs 1-2 star complaints.</p>
+                <h3>Customer Feedback Sentiment Lexicon</h3>
+                <p>Top unigram and bigram tokens driving positive ratings vs complaint feedback.</p>
               </div>
-              <span class="kpi-chip emerald">TF-IDF + N-Grams</span>
+              <span class="kpi-chip emerald">NLP Lexicon</span>
             </div>
             <div class="graph-image-wrapper" title="Click to view full-resolution plot">
-              <img src="{{ url_for('static', filename='images/model_graphs/nlp_vocabulary.png') }}" alt="NLP Portuguese Sentiment Vocabulary" class="zoomable-graph" data-title="NLP Portuguese Review Sentiment Vocabulary">
+              <img src="{{ url_for('static', filename='images/model_graphs/nlp_vocabulary.png') }}" alt="NLP Vocabulary Tokens for Positive and Negative Reviews" class="zoomable-graph" data-title="NLP Review Sentiment Lexicon">
               <div class="zoom-hint">🔍 Click to zoom</div>
-            </div>
-            <div class="deep-dive-grid">
-              <div class="deep-dive-box">
-                <h4>Top Satisfied Review Signals (Positive Class)</h4>
-                <ul>
-                  <li><strong>excelente (+3.42):</strong> Brazilian buyers highlighting exceptional product quality or quick delivery.</li>
-                  <li><strong>recomendo (+3.15):</strong> Explicit purchase advocacy indicating high word-of-mouth potential.</li>
-                  <li><strong>rapida (+2.98) &amp; antes (+2.29):</strong> Arriving before the estimated delivery date is the strongest driver of 5-star customer ratings.</li>
-                  <li><strong>tudo (+2.51) &amp; parabens (+2.65):</strong> Full fulfillment satisfaction without transit defects.</li>
-                </ul>
-              </div>
-              <div class="deep-dive-box">
-                <h4>Top Dissatisfaction Complaints (Negative Class)</h4>
-                <ul>
-                  <li><strong>nao recebi (-3.12) &amp; aguardando (-2.32):</strong> Non-delivery and lost courier packages are the primary cause of 1-star reviews.</li>
-                  <li><strong>nao recomendo (-3.42):</strong> Strong brand damage signal triggered by broken promises.</li>
-                  <li><strong>pessima (-3.25) &amp; pessimo (-3.18):</strong> Extreme customer frustration with broken items or wrong orders.</li>
-                  <li><strong>ruim (-2.95) &amp; nao gostei (-2.36):</strong> Product quality mismatch compared to online listings.</li>
-                </ul>
-              </div>
             </div>
           </div>
         </div>
 
-        <!-- Studio Tab 5: Benchmark Comparison -->
+        <!-- Studio Tab 6: Benchmark Comparison -->
         <div class="studio-panel hidden" id="tab-panel-benchmark">
           <div class="graph-preview-card">
             <div class="graph-header">
               <div>
-                <h3>Performance Benchmark &amp; Baseline Summary</h3>
+                <h3>Model Performance Benchmark Summary</h3>
                 <p>Cross-model comparison across ROC-AUC, F1-Score, Precision, and Recall.</p>
               </div>
               <span class="kpi-chip blue">Benchmark</span>
@@ -705,171 +985,22 @@
               <img src="{{ url_for('static', filename='images/model_graphs/metrics_summary.png') }}" alt="Performance Metrics Benchmark" class="zoomable-graph" data-title="Model Performance Benchmark Comparison">
               <div class="zoom-hint">🔍 Click to zoom</div>
             </div>
-            <div class="cm-table-wrap" style="margin-top:20px;">
-              <table class="cm-table">
-                <thead>
-                  <tr>
-                    <th>Model / Pipeline</th>
-                    <th>Input Modality</th>
-                    <th>Evaluation Holdout</th>
-                    <th>ROC-AUC</th>
-                    <th>F1-Score</th>
-                    <th>Precision</th>
-                    <th>Recall</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>NLP Review Sentiment</strong></td>
-                    <td>Portuguese Text Comments</td>
-                    <td>7,417 held-out reviews</td>
-                    <td class="cell-tp">0.974</td>
-                    <td class="cell-tp">0.952</td>
-                    <td>0.951</td>
-                    <td>0.952</td>
-                  </tr>
-                  <tr>
-                    <td><strong>90-Day Churn Risk</strong></td>
-                    <td>Behavioral Telemetry (14 signals)</td>
-                    <td>14,084 held-out customers</td>
-                    <td class="cell-tn">0.738</td>
-                    <td>0.776</td>
-                    <td>0.998</td>
-                    <td>0.635</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Majority Baseline</strong></td>
-                    <td>Predict Constant Churn (Class 1)</td>
-                    <td>All held-out customer snapshots</td>
-                    <td>0.500</td>
-                    <td>0.997</td>
-                    <td>0.995</td>
-                    <td>1.000</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- Studio Tab 6: Mentor Viva & Defense Guide -->
-        <div class="studio-panel hidden" id="tab-panel-viva">
-          <div class="graph-preview-card">
-            <div class="graph-header">
-              <div>
-                <h3>College Viva &amp; Evaluator Defense Masterclass</h3>
-                <p>Anticipated technical questions from mentors and external examiners with first-principles answers.</p>
-              </div>
-              <span class="kpi-chip amber">Viva Defense</span>
-            </div>
-
-            <div class="viva-accordion">
-              <div class="viva-item open">
-                <div class="viva-question">
-                  <span>Q1: What is the exact accuracy of your models, and why is ROC-AUC a better metric than raw accuracy for churn?</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </div>
-                <div class="viva-answer">
-                  <p><strong>First-Principles Answer:</strong><br>
-                  "Ma'am, for our NLP Portuguese Review Classifier, overall test accuracy is <strong>93.2%</strong> with an <strong>ROC-AUC of 0.974</strong> and an F1-Score of 0.952.</p>
-                  <p>However, for our 90-day e-commerce churn classifier, reporting raw accuracy would be academically misleading due to the severe class imbalance of non-contractual e-commerce: 99.48% of customer snapshots naturally cross the 90-day mark without a repeat order! A dummy model that blindly predicts 'churn' for everyone achieves 99.5% accuracy but zero practical utility. Therefore, we evaluate using <strong>ROC-AUC (0.738)</strong> and <strong>customer-grouped F1-score (0.776)</strong>, which measures true discriminative capability across all classification thresholds."</p>
-                  <div class="mentor-tip-box">
-                    💡 <strong>Evaluator Impression Tip:</strong> Mentors love when students understand the difference between raw accuracy and threshold-independent metrics like ROC-AUC in imbalanced domains.
-                  </div>
-                </div>
-              </div>
-
-              <div class="viva-item">
-                <div class="viva-question">
-                  <span>Q2: How did you validate your models without data leakage?</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </div>
-                <div class="viva-answer">
-                  <p><strong>First-Principles Answer:</strong><br>
-                  "We prevented data leakage at two critical stages:</p>
-                  <ol style="margin:6px 0; padding-left:20px;">
-                    <li><strong>Temporal Snapshot Integrity:</strong> When building historical customer snapshots, features are computed exclusively using orders placed on or before the snapshot date. Future orders are strictly reserved for labeling the outcome.</li>
-                    <li><strong>Customer-Grouped Holdout Partitioning:</strong> In e-commerce, active customers generate multiple monthly snapshots over time. If you run a standard random train/test split, snapshot 1 of Customer A lands in Train while snapshot 2 lands in Test, allowing the model to memorize customer identity. We used <code>GroupShuffleSplit</code> grouped on <code>customer_unique_id</code>: all snapshots for a given customer remain strictly in Train or strictly in Test."</li>
-                  </ol>
-                </div>
-              </div>
-
-              <div class="viva-item">
-                <div class="viva-question">
-                  <span>Q3: Why is churn defined as 90-day inactivity instead of a cancellation flag?</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </div>
-                <div class="viva-answer">
-                  <p><strong>First-Principles Answer:</strong><br>
-                  "Unlike subscription services (such as SaaS or streaming subscriptions) where customers explicitly click 'Cancel Subscription', e-commerce marketplaces (Amazon, Flipkart, Olist) operate under a <strong>non-contractual business model</strong>. Customers never cancel; they simply stop returning. In industry, the standard mathematical formulation is to establish an <em>Inactivity Window</em>. We chose 90 days: at 90 days without a purchase, a customer enters inactive status. For customers still within the 90 days, our classifier predicts the probability of crossing that threshold before a repeat order."</p>
-                </div>
-              </div>
-
-              <div class="viva-item">
-                <div class="viva-question">
-                  <span>Q4: Why are the reviews in Portuguese and how does your application process them?</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </div>
-                <div class="viva-answer">
-                  <p><strong>First-Principles Answer:</strong><br>
-                  "Olist is the largest Brazilian e-commerce marketplace, so all customer comments were submitted by real Brazilian consumers in Portuguese. Rather than discarding or translating the dataset offline, we built an authentic cross-lingual architecture:</p>
-                  <ul>
-                    <li>Our Scikit-Learn NLP classifier performs TF-IDF feature extraction directly on Portuguese n-grams to score sentiment natively with 0.974 ROC-AUC.</li>
-                    <li>When displaying executive recommendations or drafting service emails, our Google Gemini 3.5 Copilot translates the complaint into fluent English and maps the root cause to verified retention protocols."</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="viva-item">
-                <div class="viva-question">
-                  <span>Q5: How does the GenAI component (Gemini 3.5 + RAG) connect with the ML models?</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </div>
-                <div class="viva-answer">
-                  <p><strong>First-Principles Answer:</strong><br>
-                  "Standard LLMs hallucinate generic, untargeted advice when asked to save a customer. In RetainX, we built a deterministic <strong>Retrieval-Augmented Generation (RAG)</strong> pipeline:
-                  <ol style="margin:6px 0; padding-left:20px;">
-                    <li>The statistical ML model calculates the 90-day churn score and extracts top feature risk drivers (e.g. Delivery Delay = +0.18, Negative Review = 1 star).</li>
-                    <li>The RAG Retriever in <code>knowledge_base.py</code> scans domain playbooks and retrieves verified intervention protocols (e.g. Logistics Service Recovery Protocol, High Freight Voucher Strategy).</li>
-                    <li>These retrieved protocols, along with customer metrics and the translated Portuguese complaint, are injected into the Gemini 3.5 Flash context window, producing actionable, policy-compliant retention briefings and email drafts."</li>
-                  </ol>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
       </div>
-    </div><!-- End View 2: #view-analytics -->
+    </div><!-- End View 3: #view-analytics -->
 
     <!-- Lightbox Modal for Full-Res Graph Inspection -->
     <div class="lightbox-modal" id="graph-lightbox" role="dialog" aria-modal="true" aria-label="Graph viewer">
       <div class="lightbox-content">
         <button type="button" class="lightbox-close-btn" id="lightbox-close" aria-label="Close image preview">&times;</button>
-        <img id="lightbox-img" src="" alt="Evaluation graph preview">
+        <img src="" alt="Enlarged graph preview" id="lightbox-img">
       </div>
     </div>
 
-    <!-- Clean Enterprise Footer -->
-    <footer class="app-footer">
-      <div class="footer-left">
-        <span>RetainX Enterprise · Olist E-Commerce Retention Intelligence</span>
-        <span class="footer-dot">•</span>
-        <span>Churn score and review signals</span>
-      </div>
-      <div class="footer-right">
-        <span>Olist dataset · Brazil</span>
-      </div>
-    </footer>
   </main>
 
-  <script>
-    window.RETAINX_CONFIG = {
-      models: {{ model_availability|tojson }},
-      aiConfigured: {{ ai_configured|tojson }}
-    };
-  </script>
-  <script src="{{ url_for('static', filename='retainx.js', v='8') }}" defer></script>
+  <script src="{{ url_for('static', filename='retainx.js') }}?v=12"></script>
 </body>
 </html>
-
