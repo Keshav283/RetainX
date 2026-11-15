@@ -361,7 +361,7 @@ def gemini_reply(case, question, history=None, mode="chat"):
         "systemInstruction": {"parts": [{"text": system_prompt}]},
         "contents": contents,
         "generationConfig": {
-            "maxOutputTokens": 650 if mode == "recommendation" else 500,
+            "maxOutputTokens": 4096 if mode == "recommendation" else 2048,
             "temperature": 0.35,
         },
     }
