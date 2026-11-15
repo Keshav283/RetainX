@@ -151,7 +151,23 @@ class RetainXApiTests(unittest.TestCase):
         self.assertEqual(send.call_args.kwargs["timeout"], 45)
         payload = __import__("json").loads(request.data.decode("utf-8"))
         self.assertIn("latest question", payload["systemInstruction"]["parts"][0]["text"])
-        self.assertLessEqual(payload["generationConfig"]["maxOutputTokens"], 500)
+        self.assertEqual(payload["generationConfig"]["maxOutputTokens"], 2048)
+
+    def test_gemini_recommendation_allows_longer_generated_answers(self):
+        response_body = b'{"candidates":[{"content":{"parts":[{"text":"Complete retention briefing."}]}}]}'
+        with patch.dict(os.environ, {
+            "GEMINI_API_KEY": "test-only-gemini-key",
+            "GEMINI_MODEL": "gemini-test-model",
+        }), patch.object(retainx, "urlopen", return_value=io.BytesIO(response_body)) as send:
+            answer = retainx.gemini_reply(
+                retainx.model_case("ecommerce", ecommerce_customer()),
+                "Prepare a retention plan.",
+                mode="recommendation",
+            )
+
+        self.assertEqual(answer, "Complete retention briefing.")
+        payload = __import__("json").loads(send.call_args.args[0].data.decode("utf-8"))
+        self.assertEqual(payload["generationConfig"]["maxOutputTokens"], 4096)
 
     def test_review_sentiment_is_analyzed_with_rag_playbook(self):
         review_vectorizer = TfidfVectorizer()
