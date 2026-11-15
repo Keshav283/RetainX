@@ -374,6 +374,40 @@ Gemini's role is not to invent business policy from scratch, but to synthesize, 
 
 ---
 
+---
+
+### Category F: Unsupervised Learning & Enterprise Batch Operations (DMart Scenario)
+
+#### Q18. "What unsupervised algorithm did you implement in RetainX, and why was it necessary?"
+**Answer:**  
+*"We implemented **K-Means Clustering** as our unsupervised learning engine.
+It was necessary because supervised learning only answers one question: *'Will this customer leave?'* ($Y \in \{0, 1\}$).
+However, a retail business cannot treat all churners or loyalists identically. An enterprise like DMart has vastly different customer types: bulk grocery buyers, price-sensitive occasional shoppers, delivery-delayed buyers, and dormant accounts.
+K-Means groups our 100,000 customers into **4 behavioral clusters** based on RFM (Recency, Frequency, Monetary) telemetry, review ratings, and delivery delays without requiring manual ground-truth labels."*
+
+#### Q19. "How did you determine the optimal number of clusters ($k=4$)? What is the Elbow Method and Silhouette Score?"
+**Answer:**  
+*"We used two rigorous mathematical validation methods:
+1. **The Elbow Method (WCSS Minimization):** We ran K-Means across $k \in [2, 7]$ and plotted the Within-Cluster Sum of Squares ($J = \sum_{k} \sum_{x \in C_k} ||x - \mu_k||^2$). The sharpest inflection ('elbow') occurred at **$k = 4$** ($J = 102,994.0$), where adding more clusters yields diminishing marginal variance explained.
+2. **Silhouette Score:** Evaluated sample silhouette coefficients $s(i) = \frac{b(i) - a(i)}{\max(a(i), b(i))}$, achieving **$\bar{s} = 0.233$** at $k=4$, confirming that intra-cluster compactness ($a$) and inter-cluster separation ($b$) are balanced."*
+
+#### Q20. "What are the 4 behavioral segments discovered by K-Means?"
+**Answer:**  
+*"Based on centroid telemetry in our 100,000 customer dataset:
+1. **Cluster 0: Active Regulars / Promising (52.2%):** Core repeat shoppers with low dormancy (~17.5 days recency) and steady purchasing habits.
+2. **Cluster 1: Transit-Friction / Logistics-Delayed (11.9%):** Shoppers who suffered severe courier SLA delays (+6.44 days late, ~30 days in transit). They churn due to logistics failure rather than brand dissatisfaction.
+3. **Cluster 2: At-Risk / Lapsing Buyers (33.2%):** Inactive shoppers crossing 95+ days recency. Their order frequency has stalled, requiring timed win-back incentives.
+4. **Cluster 3: VIP High-Net-Worth Champions (2.7%):** High-spend bulk buyers with ₹8.5L+ lifetime spend and high basket sizes (AOV ₹17,700+), qualifying for white-glove concierge perks."*
+
+#### Q21. "Why can't a real business like DMart just use the single-customer simulator form?"
+**Answer:**  
+*"In real business operations, an executive or store manager doesn't manually type the telemetry of one customer into a form. A company like DMart collects past 30 days of transactions for **thousands or lakhs of customers**.
+That's why RetainX provides two unified workflows:
+1. **The Enterprise Batch Engine (Tab 3):** The business uploads their 30-day cohort CSV (e.g. 5,000 DMart customers). RetainX vectors and scores all 5,000 customers in 0.18 seconds, displaying the aggregate split: e.g. **3,714 will retain (74.3%) and 1,286 will churn (25.7%)**, breaks them down by K-Means segments, and lets the manager download the prioritized target list.
+2. **The Retention Simulator (Tab 1):** Kept for customer success agents and deep-dive analysis. When a manager identifies a high-value at-risk customer from the batch list, they plug their ID into the simulator to receive Gemini AI-crafted apology drafts, compensation vouchers, and RAG service recovery playbooks."*
+
+---
+
 # 10. YOUR VIVA GAMEPLAN & CHEAT SHEET
 
 1. **Keep the UI open on `http://127.0.0.1:5000`** in your browser.
